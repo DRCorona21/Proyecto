@@ -58,4 +58,20 @@ router.get('/vehiculo', async(req, res) => {
     }
 });
 
+//Obtener colores coloridos
+router.get('/colores', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const result = await connection.execute(`SELECT * FROM COLOR`);
+        res.render('colores', { data: result.rows }); //nombre ejs
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
 module.exports = router;

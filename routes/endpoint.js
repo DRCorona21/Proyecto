@@ -152,4 +152,90 @@ router.post('/vehiculo/:id_v/update', async(req, res) => {
     }
 });
 
+//ENDSPOINT COLORES
+
+// Insertar una nuevo color
+router.post('/colores', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { ID, COLOR } = req.body;
+
+        // Verificar si el ID ya existe
+        const checkResult = await connection.execute(
+            `SELECT COUNT(*) AS COUNT FROM COLOR WHERE ID = :ID`, { ID }
+        );
+
+        if (checkResult.rows[0].COUNT > 0) {
+            res.status(400).send('Error: El ID ya existe en la base de datos.');
+            return;
+        }
+
+        await connection.execute(
+            `INSERT INTO COLOR (ID, COLOR) VALUES (:ID, :COLOR)`, { ID, COLOR}, { autoCommit: true }
+        );
+
+        res.redirect('/api/colores');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al insertar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Eliminar un color
+router.post('/colores/:id/delete', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const ID = req.params.id;
+
+        console.log(`Eliminando registro con ID: ${ID}`);
+
+        await connection.execute(
+            `DELETE FROM COLOR WHERE ID = :ID`, { ID }, { autoCommit: true }
+        );
+
+        res.redirect('/api/colores');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al eliminar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Actualizar un color
+router.post('/colores/:id/update', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { color } = req.body; //segun final .EJS
+        const ID = req.params.id;
+
+        console.log(`Actualizando registro con ID: ${ID}`);
+        console.log(`Datos recibidos: ${JSON.stringify(req.body)}`);
+
+        if (!color) {
+            res.status(400).send('Error: Todos los campos requeridos deben tener valores.');
+            return;
+        }
+
+        await connection.execute(
+            `UPDATE COLOR SET COLOR = :color WHERE ID = :ID`, { color, ID}, { autoCommit: true }
+        );
+
+        res.redirect('/api/colores');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al actualizar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
 module.exports = router;
