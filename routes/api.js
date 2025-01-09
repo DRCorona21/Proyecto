@@ -82,4 +82,24 @@ router.get('/colores', async(req, res) => {
     }
 });
 
+//Obtener modelos modelados 
+router.get('/modelos', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const result = await connection.execute(`
+            SELECT MODELO.ID, MODELO.MODELO, MARCA.MARCA, MODELO.MARCA_ID
+            FROM MODELO 
+            JOIN MARCA ON MODELO.MARCA_ID = MARCA.ID
+        `);
+        res.render('modelos', { data: result.rows }); //nombre ejs
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
 module.exports = router;

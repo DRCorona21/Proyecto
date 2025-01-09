@@ -41,12 +41,14 @@
     </div>
     <div class="content">
         <div class="card card-table">
-            <h1>Colores disponibles</h1>
+            <h1>Modelos disponibles</h1>
             <table border="1">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>COLOR</th>
+                        <th>MODELO</th>
+                        <th>MARCA</th>
+                        <th style="display:none;">MARCA_ID</th>
                         <th class="no-border"></th>
                         <th class="no-border"></th>
                     </tr>
@@ -54,18 +56,15 @@
                 <tbody>
                     <% data.forEach(row => { %>
                         <tr>
-                            <td>
-                                <%= row.ID %>
-                            </td>
-                            <td>
-                                <%= row.COLOR %>
-                            </td>
-                           
+                            <td><%= row.ID %></td>
+                            <td><%= row.MODELO %></td>
+                            <td><%= row.MARCA %></td>
+                            <td style="display:none;"><%= row.MARCA_ID %></td>
                             <td class="no-border" style="text-align: center;">
-                                <button class="table-button" onclick="fillEditForm('<%= row.ID %>', '<%= row.COLOR %>')"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="table-button" onclick="fillEditForm('<%= row.ID %>', '<%= row.MODELO %>', '<%= row.MARCA %>', '<%= row.MARCA_ID %>')"><i class="fa-solid fa-pen-to-square"></i></button>
                             </td>
                             <td class="no-border" style="text-align: center;">
-                                <form action="/api/colores/<%= row.ID %>/delete" method="POST" style="display:inline;">
+                                <form action="/api/modelos/<%= row.ID %>/delete" method="POST" style="display:inline;">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <button type="submit" class="table-button"><i class="fa-solid fa-trash"></i></button>
                                 </form>
@@ -78,31 +77,40 @@
 
         <div class="form-container">
             <div class="card card-form">
-                <h2>Agregar Color</h2>
-                <form action="/api/colores" method="POST">
+                <h2>Agregar Modelo</h2>
+                <form action="/api/modelos" method="POST">
                     <div class="form-group">
-                        <label for="ID">ID:</label>
-                        <input type="text" id="ID" name="ID" placeholder="ID" required>
+                        <label for="id">ID:</label>
+                        <input type="text" id="id" name="id" placeholder="ID" required>
                     </div>
                     <div class="form-group">
-                        <label for="COLOR">COLOR:</label>
-                        <input type="text" id="COLOR" name="COLOR" placeholder="COLOR" required>
+                        <label for="modelo">MODELO:</label>
+                        <input type="text" id="modelo" name="modelo" placeholder="MODELO" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="marca_id">MARCA_ID:</label>
+                        <input type="text" id="marca_id" name="marca_id" placeholder="MARCA_ID" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Agregar</button>
                 </form>
             </div>
 
             <div class="card card-form">
-                <h2>Editar Color</h2>
-                <form id="editForm" action="/api/colores/%/update" method="POST">
+                <h2>Editar Modelo</h2>
+                <form id="editForm" action="/api/modelos/%/update" method="POST">
                     <input type="hidden" name="_method" value="PUT">
                     <div class="form-group">
                         <label for="edit_id">ID:</label>
                         <input type="text" id="edit_id" name="id" placeholder="ID" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="edit_color">COLOR:</label>
-                        <input type="text" id="edit_color" name="color" placeholder="Color" required>
+                        <label for="edit_modelo">MODELO:</label>
+                        <input type="text" id="edit_modelo" name="modelo" placeholder="MODELO" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_marca_id">MARCA_ID:</label>
+                        <input type="text" id="edit_marca_id" name="marca_id" placeholder="MARCA_ID" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Editar</button>
                 </form>
@@ -110,10 +118,11 @@
         </div>
     </div>
     <script>
-        function fillEditForm(id, color) {
-            document.getElementById('editForm').action = '/api/colores/' + id + '/update';
+        function fillEditForm(id, modelo, marca, marca_id) {
+            document.getElementById('editForm').action = '/api/modelos/' + id + '/update';
             document.getElementById('edit_id').value = id;
-            document.getElementById('edit_color').value = color;
+            document.getElementById('edit_modelo').value = modelo;
+            document.getElementById('edit_marca_id').value = marca_id;
         }
     </script>
 </body>

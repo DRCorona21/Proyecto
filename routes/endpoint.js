@@ -256,4 +256,83 @@ router.post('/colores/:id/update', async(req, res) => {
     }
 });
 
+// Insertar un nuevo modelo
+router.post('/modelos', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { id, modelo, marca_id } = req.body;
+
+        // Verificar si el ID ya existe
+        const checkResult = await connection.execute(
+            `SELECT COUNT(*) AS COUNT FROM MODELO WHERE ID = :id`, { id }
+        );
+
+        if (checkResult.rows[0].COUNT > 0) {
+            res.send(res.locals.showAlert('Error: El ID ya existe en la base de datos.'));
+            return;
+        }
+
+        await connection.execute(
+            `INSERT INTO MODELO (ID, MODELO, MARCA_ID) VALUES (:id, :modelo, :marca_id)`, { id, modelo, marca_id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/modelos');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al insertar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Eliminar un modelo
+router.post('/modelos/:id/delete', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const id = req.params.id;
+
+        await connection.execute(
+            `DELETE FROM MODELO WHERE ID = :id`, { id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/modelos');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al eliminar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Actualizar un modelo
+router.post('/modelos/:id/update', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { modelo, marca_id } = req.body;
+        const id = req.params.id;
+
+        if (!modelo || !marca_id) {
+            res.status(400).send('Error: Todos los campos requeridos deben tener valores.');
+            return;
+        }
+
+        await connection.execute(
+            `UPDATE MODELO SET MODELO = :modelo, MARCA_ID = :marca_id WHERE ID = :id`, { modelo, marca_id, id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/modelos');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al actualizar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
 module.exports = router;
