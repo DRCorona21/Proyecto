@@ -4,8 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Métodos de Pago</title>
+    <title>Motores</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/yourcode.js" crossorigin="anonymous"></script>
+
+
+
     <link rel="stylesheet" href="/styles.css">
 </head>
 
@@ -47,12 +51,12 @@
     </div>
     <div class="content">
         <div class="card card-table">
-            <h1>Métodos de Pago disponibles</h1>
+            <h1>Motores disponibles</h1>
             <table border="1">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>METODO</th>
+                        <th>TIPO</th>
                         <th class="no-border"></th>
                         <th class="no-border"></th>
                     </tr>
@@ -64,13 +68,14 @@
                                 <%= row.ID %>
                             </td>
                             <td>
-                                <%= row.METODO %>
+                                <%= row.TIPO %>
+                            </td>
+
+                            <td class="no-border" style="text-align: center;">
+                                <button class="table-button" onclick="fillEditForm('<%= row.ID %>', '<%= row.TIPO %>')"><i class="fa-solid fa-pen-to-square"></i></button>
                             </td>
                             <td class="no-border" style="text-align: center;">
-                                <button class="table-button" onclick="fillEditForm('<%= row.ID %>', '<%= row.METODO %>')"><i class="fa-solid fa-pen-to-square"></i></button>
-                            </td>
-                            <td class="no-border" style="text-align: center;">
-                                <form action="/api/metodos/<%= row.ID %>/delete" method="POST" style="display:inline;">
+                                <form action="/api/motores/<%= row.ID %>/delete" method="POST" style="display:inline;">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <button type="submit" class="table-button"><i class="fa-solid fa-trash"></i></button>
                                 </form>
@@ -83,31 +88,31 @@
 
         <div class="form-container">
             <div class="card card-form">
-                <h2>Agregar Método de Pago</h2>
-                <form action="/api/metodos" method="POST">
+                <h2>Agregar Motor</h2>
+                <form action="/api/motores" method="POST">
                     <div class="form-group">
                         <label for="id">ID:</label>
-                        <input type="text" id="id" name="id" placeholder="ID" required>
+                        <input type="number" id="id" name="id" placeholder="ID" required>
                     </div>
                     <div class="form-group">
-                        <label for="metodo">METODO:</label>
-                        <input type="text" id="metodo" name="metodo" placeholder="METODO" required>
+                        <label for="tipo">TIPO:</label>
+                        <input type="text" id="tipo" name="tipo" placeholder="TIPO" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Agregar</button>
                 </form>
             </div>
 
             <div class="card card-form">
-                <h2>Editar Método de Pago</h2>
-                <form id="editForm" action="/api/metodos/%/update" method="POST">
+                <h2>Editar Motor</h2>
+                <form id="editForm" action="/api/motores/%/update" method="POST">
                     <input type="hidden" name="_method" value="PUT">
                     <div class="form-group">
                         <label for="edit_id">ID:</label>
                         <input type="text" id="edit_id" name="id" placeholder="ID" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="edit_metodo">METODO:</label>
-                        <input type="text" id="edit_metodo" name="metodo" placeholder="METODO" required>
+                        <label for="edit_tipo">TIPO:</label>
+                        <input type="text" id="edit_tipo" name="tipo" placeholder="TIPO" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Editar</button>
                 </form>
@@ -115,10 +120,10 @@
         </div>
     </div>
     <script>
-        function fillEditForm(id, metodo) {
-            document.getElementById('editForm').action = '/api/metodos/' + id + '/update';
+        function fillEditForm(id, tipo) {
+            document.getElementById('editForm').action = '/api/motores/' + id + '/update';
             document.getElementById('edit_id').value = id;
-            document.getElementById('edit_metodo').value = metodo;
+            document.getElementById('edit_tipo').value = tipo;
         }
     </script>
 </body>

@@ -284,6 +284,42 @@ router.get('/contacto_empleado', async(req, res) => {
     }
 });
 
+//Obtener transmisionesv2
+router.get('/transmisionv2', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const result = await connection.execute(`
+            SELECT * FROM TRANSMISION ORDER BY ID ASC
+        `);
+        res.render('transmisionv2', { data: result.rows }); //nombre ejs
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+//Obtener motoresv2
+router.get('/motores', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const result = await connection.execute(`
+            SELECT * FROM TIPO_MOTOR ORDER BY ID ASC
+        `);
+        res.render('motores', { data: result.rows }); //nombre ejs
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
 // Obtener todos los estados
 router.get('/estados', async(req, res) => {
     let connection;
@@ -360,6 +396,7 @@ router.get('/transmisiones', async(req, res) => {
         await closeConnection(connection);
     }
 });
+
 
 // Obtener todos los estados de vehículos
 router.get('/estados_vehiculo', async(req, res) => {

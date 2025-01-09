@@ -731,4 +731,162 @@ router.post('/contacto_empleado/:id/update', async(req, res) => {
     }
 });
 
+// Insertar una nueva transmisión
+router.post('/transmisionv2', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { id, tipo } = req.body;
+
+        // Verificar si el ID ya existe
+        const checkResult = await connection.execute(
+            `SELECT COUNT(*) AS COUNT FROM TRANSMISION WHERE ID = :id`, { id }
+        );
+
+        if (checkResult.rows[0].COUNT > 0) {
+            res.send(res.locals.showAlert('Error: El ID ya existe en la base de datos.'));
+            return;
+        }
+
+        await connection.execute(
+            `INSERT INTO TRANSMISION (ID, TIPO) VALUES (:id, :tipo)`, { id, tipo }, { autoCommit: true }
+        );
+
+        res.redirect('/api/transmisionv2');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al insertar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Eliminar una transmisión
+router.post('/transmisionv2/:id/delete', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const id = req.params.id;
+
+        await connection.execute(
+            `DELETE FROM TRANSMISION WHERE ID = :id`, { id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/transmisionv2');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al eliminar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Actualizar una transmisión
+router.post('/transmisionv2/:id/update', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { tipo } = req.body;
+        const id = req.params.id;
+
+        if (!tipo) {
+            res.status(400).send('Error: Todos los campos requeridos deben tener valores.');
+            return;
+        }
+
+        await connection.execute(
+            `UPDATE TRANSMISION SET TIPO = :tipo WHERE ID = :id`, { tipo, id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/transmisionv2');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al actualizar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Insertar un nuevo motor
+router.post('/motores', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { id, tipo } = req.body;
+
+        // Verificar si el ID ya existe
+        const checkResult = await connection.execute(
+            `SELECT COUNT(*) AS COUNT FROM TIPO_MOTOR WHERE ID = :id`, { id }
+        );
+
+        if (checkResult.rows[0].COUNT > 0) {
+            res.send(res.locals.showAlert('Error: El ID ya existe en la base de datos.'));
+            return;
+        }
+
+        await connection.execute(
+            `INSERT INTO TIPO_MOTOR (ID, TIPO) VALUES (:id, :tipo)`, { id, tipo }, { autoCommit: true }
+        );
+
+        res.redirect('/api/motores');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al insertar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Eliminar un motor
+router.post('/motores/:id/delete', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const id = req.params.id;
+
+        await connection.execute(
+            `DELETE FROM TIPO_MOTOR WHERE ID = :id`, { id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/motores');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al eliminar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Actualizar un motor
+router.post('/motores/:id/update', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { tipo } = req.body;
+        const id = req.params.id;
+
+        if (!tipo) {
+            res.status(400).send('Error: Todos los campos requeridos deben tener valores.');
+            return;
+        }
+
+        await connection.execute(
+            `UPDATE TIPO_MOTOR SET TIPO = :tipo WHERE ID = :id`, { tipo, id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/motores');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al actualizar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
 module.exports = router;

@@ -28,6 +28,8 @@
                 <li class="menu-item"><i class="fa-solid fa-paint-roller"></i><span onclick="window.location.href='/api/colores'">Colores Vehiculares</span></li>
                 <li class="menu-item"><i class="fa-solid fa-caravan"></i><span onclick="window.location.href='/api/marca'">Marcas</span></li>
                 <li class="menu-item"><i class="fa-solid fa-car"></i><span onclick="window.location.href='/api/modelos'">Modelos</span></li>
+                <li class="menu-item"><i class="fa-solid fa-oil-can"></i><span onclick="window.location.href='/api/motores'">Motores</span></li>
+                <li class="menu-item"><i class="fa-duotone fa-solid fa-gear"></i><span onclick="window.location.href='/api/transmisionv2'">Transmisiones</span></li>
                 <li class="menu-item"><i class="fa-solid fa-award"></i><span onclick="window.location.href='/api/garantia'">Garantías</span></li>
                 <li class="menu-item"><i class="fa-solid fa-users"></i><span>Empleados</span></li>
                 <li class="menu-item"><i class="fa-solid fa-address-card"></i><span onclick="window.location.href='/api/contacto_empleado'">Contacto empleados</span></li>
@@ -393,7 +395,7 @@
             document.getElementById('edit_transmision_id').value = transmision_id;
             document.getElementById('edit_precio').value = precio;
             document.getElementById('edit_estado_v_id').value = estado_v_id;
-            document.getElementById('edit_fecha_ingreso').value = fecha_ingreso;
+            document.getElementById('edit_fecha_ingreso').value = new Date(fecha_ingreso).toISOString().split('T')[0];
             document.getElementById('edit_num_motor').value = num_motor;
             document.getElementById('edit_tipo_motor_id').value = tipo_motor_id;
             document.getElementById('edit_capacidad').value = capacidad;
