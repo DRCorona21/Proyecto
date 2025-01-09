@@ -460,4 +460,218 @@ router.get('/modelos/maxId', async(req, res) => {
     }
 });
 
+// Obtener detalles de ventas de vehículos
+router.get('/ventas', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const result = await connection.execute(`
+            SELECT VENTA.CLAVE, VEHICULO.VIN, MARCA.MARCA, MODELO.MODELO, VEHICULO.ANIO, COLOR.COLOR, TIPO.TIPO, VEHICULO.LINEA, TRANSMISION.TIPO AS TRANSMISION, VEHICULO.PRECIO,
+                   ESTADO_V.ESTADO, VEHICULO.FECHA_INGRESO, VEHICULO.NUM_MOTOR, TIPO_MOTOR.TIPO AS TIPO_MOTOR, VEHICULO.CAPACIDAD, VEHICULO.NUM_CILINDROS, VEHICULO.NUM_PUERTAS,
+                   PROVEEDOR.EMPRESA AS PROVEEDOR, VENTA.FECHA_VENTA, VENTA.FECHA_ENTREGA, VENTA.NO_FACTURA, CLIENTE.NOMBRE AS NOMBRE_CLIENTE, EMPLEADO.NOMBRE AS NOMBRE_EMPLEADO, 
+                   CONCESIONARIA.NOMBRE AS NOMBRE_CONCESIONARIA, CONCESIONARIA.PAGINA_WEB, CONCESIONARIA.RFC, TIPO_GARANTIA.GARANTIA, METODO_PAGO.METODO
+            FROM VEHICULO
+            JOIN MARCA ON VEHICULO.MARCA_ID = MARCA.ID
+            JOIN MODELO ON VEHICULO.MODELO_ID = MODELO.ID
+            JOIN COLOR ON VEHICULO.COLOR_ID = COLOR.ID
+            JOIN TIPO ON VEHICULO.TIPO_ID = TIPO.ID
+            JOIN TRANSMISION ON VEHICULO.TRANSMISION_ID = TRANSMISION.ID
+            JOIN ESTADO_V ON VEHICULO.ESTADO_V_ID = ESTADO_V.ID
+            JOIN TIPO_MOTOR ON VEHICULO.TIPO_MOTOR_ID = TIPO_MOTOR.ID
+            JOIN PROVEEDOR ON VEHICULO.PROVEEDOR_ID_FK = PROVEEDOR.ID_P
+            JOIN DETALLE_VENTA ON VEHICULO.ID_V = DETALLE_VENTA.VEHICULO_ID_V
+            JOIN VENTA ON DETALLE_VENTA.VENTA_CLAVE = VENTA.CLAVE
+            JOIN CLIENTE ON VENTA.CLIENTE_ID_C = CLIENTE.ID_C
+            JOIN EMPLEADO ON VENTA.EMPLEADO_ID_E = EMPLEADO.ID_E
+            JOIN CONCESIONARIA ON VENTA.CONCESIONARIA_CLAVE = CONCESIONARIA.CLAVE
+            JOIN TIPO_GARANTIA ON VENTA.TIPO_GARANTIA_ID = TIPO_GARANTIA.ID
+            JOIN DETALLE_PAGO ON VENTA.CLAVE = DETALLE_PAGO.VENTA_CLAVE
+            JOIN METODO_PAGO ON DETALLE_PAGO.METODO_PAGO_ID = METODO_PAGO.ID
+            ORDER BY VENTA.CLAVE ASC
+        `);
+        res.render('ventas', { data: result.rows });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Obtener todos los empleados
+router.get('/empleado', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const result = await connection.execute(`
+            SELECT EMPLEADO.ID_E, DIRECCION.ID, CONCESIONARIA.CLAVE, EMPLEADO.NOMBRE, EMPLEADO.APELLIDO_PAT, EMPLEADO.APELLIDO_MAT, EMPLEADO.RFC, EMPLEADO.FECHA_NACI,
+            CARGO_EMPLEADO.CARGO, CONCESIONARIA.NOMBRE AS CONCESIONARIA_NOMBRE,
+            CONTACTO_EMPLEADO.CORREO, CONTACTO_EMPLEADO.TELEFONO, ESTADO.ESTADO,
+            ALC_MUN.ALC_MUN, DIRECCION.CP, DIRECCION.CALLE, DIRECCION.NO_INT, DIRECCION.NO_EXT 
+            FROM EMPLEADO
+            JOIN DIRECCION ON EMPLEADO.DIRECCION_ID = DIRECCION.ID
+            JOIN ESTADO ON DIRECCION.ESTADO_ID = ESTADO.ID
+            JOIN ALC_MUN ON DIRECCION.ALC_MUN_ID = ALC_MUN.ID
+            JOIN CONTACTO_EMPLEADO ON EMPLEADO.CONTACTO_EMPLEADO_ID = CONTACTO_EMPLEADO.ID
+            JOIN CARGO_EMPLEADO ON EMPLEADO.CARGO_EMPLEADO_ID = CARGO_EMPLEADO.ID
+            JOIN CONCESIONARIA ON EMPLEADO.CONCESIONARIA_CLAVE = CONCESIONARIA.CLAVE
+            ORDER BY EMPLEADO.ID_E ASC
+        `);
+        res.render('empleados', { data: result.rows });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Obtener un empleado por ID
+router.get('/empleado/:id', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const id_e = req.params.id;
+        const result = await connection.execute(`
+            SELECT EMPLEADO.ID_E, DIRECCION.ID, EMPLEADO.APELLIDO_PAT, EMPLEADO.APELLIDO_MAT, EMPLEADO.RFC, EMPLEADO.FECHA_NACI,
+            CARGO_EMPLEADO.CARGO, CONTACTO_EMPLEADO.CORREO, CONTACTO_EMPLEADO.TELEFONO, ESTADO.ESTADO,
+            ALC_MUN.ALC_MUN, DIRECCION.CP, DIRECCION.CALLE, DIRECCION.NO_INT, DIRECCION.NO_EXT 
+            FROM EMPLEADO
+            JOIN DIRECCION ON EMPLEADO.DIRECCION_ID = DIRECCION.ID
+            JOIN ESTADO ON DIRECCION.ESTADO_ID = ESTADO.ID
+            JOIN ALC_MUN ON DIRECCION.ALC_MUN_ID = ALC_MUN.ID
+            JOIN CONTACTO_EMPLEADO ON EMPLEADO.CONTACTO_EMPLEADO_ID = CONTACTO_EMPLEADO.ID
+            JOIN CARGO_EMPLEADO ON EMPLEADO.CARGO_EMPLEADO_ID = CARGO_EMPLEADO.ID
+            WHERE EMPLEADO.ID_E = :id_e
+        `, { id_e });
+
+        if (result.rows.length > 0) {
+            res.json(result.rows[0]);
+        } else {
+            res.status(404).send('Empleado no encontrado');
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Obtener todos los datos necesarios para auto-rellenar el formulario de editar empleado
+router.get('/empleado/:id/editData', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+        const id_e = req.params.id;
+
+        const result = await connection.execute(`
+            SELECT EMPLEADO.ID_E, EMPLEADO.CONCESIONARIA_CLAVE, EMPLEADO.NOMBRE, EMPLEADO.APELLIDO_PAT, EMPLEADO.APELLIDO_MAT, EMPLEADO.RFC, EMPLEADO.FECHA_NACI,
+            EMPLEADO.CARGO_EMPLEADO_ID, EMPLEADO.CONTACTO_EMPLEADO_ID, EMPLEADO.DIRECCION_ID
+            FROM EMPLEADO
+            WHERE EMPLEADO.ID_E = :id_e
+        `, { id_e });
+
+        if (result.rows.length > 0) {
+            res.json(result.rows[0]);
+        } else {
+            res.status(404).send('Empleado no encontrado');
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Obtener todos los datos necesarios para auto-rellenar el formulario de editar vehículo
+router.get('/vehiculo/:id/editData', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+        const id_v = req.params.id;
+
+        const result = await connection.execute(`
+            SELECT VEHICULO.ID_V, VEHICULO.VIN, VEHICULO.MARCA_ID, VEHICULO.MODELO_ID, VEHICULO.ANIO, VEHICULO.COLOR_ID, VEHICULO.TIPO_ID, VEHICULO.LINEA, VEHICULO.TRANSMISION_ID, VEHICULO.PRECIO, VEHICULO.ESTADO_V_ID, VEHICULO.FECHA_INGRESO, VEHICULO.NUM_MOTOR, VEHICULO.TIPO_MOTOR_ID, VEHICULO.CAPACIDAD, VEHICULO.NUM_CILINDROS, VEHICULO.NUM_PUERTAS, VEHICULO.PROVEEDOR_ID_FK
+            FROM VEHICULO
+            WHERE VEHICULO.ID_V = :id_v
+        `, { id_v });
+
+        if (result.rows.length > 0) {
+            res.json(result.rows[0]);
+        } else {
+            res.status(404).send('Vehículo no encontrado');
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Obtener todos los cargos para empleados
+router.get('/tofillemp/cargos', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+        const result = await connection.execute(`SELECT ID, CARGO FROM CARGO_EMPLEADO ORDER BY ID ASC`);
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Obtener todos los contactos para empleados
+router.get('/tofillemp/contacto_empleado', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+        const result = await connection.execute(`SELECT ID, CORREO FROM CONTACTO_EMPLEADO ORDER BY ID ASC`);
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Obtener todas las direcciones para empleados
+router.get('/tofillemp/direccion', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+        const result = await connection.execute(`SELECT ID, CALLE FROM DIRECCION ORDER BY ID ASC`);
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Obtener todas las concesionarias para empleados
+router.get('/tofillemp/concesionarias', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+        const result = await connection.execute(`SELECT CLAVE, NOMBRE FROM CONCESIONARIA ORDER BY CLAVE ASC`);
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
 module.exports = router;

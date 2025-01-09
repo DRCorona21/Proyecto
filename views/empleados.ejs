@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empleados</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="center-title" onclick="window.location.href='/'">Inicio</div>
+        <div class="profile-section">
+            <div class="title">Administrador</div>
+            <div class="profile-icon"></div>
+        </div>
+    </div>
+    <br><br>
+    <div class="sidebar">
+        <div class="logo" onclick="window.location.href='/'"><i class="fa-sharp-duotone fa-solid fa-car-side"></i>Concesionaria Compitas</div>
+        <div class="transacciones">
+            <h3>Concesionaria</h3>
+            <ul class="menu">
+                <li class="menu-item"><i class="fas fa-home"></i><span onclick="window.location.href='/api/direccion'">Direcciones</span></li>
+                <li class="menu-item"><i class="fa-solid fa-car"></i><span onclick="window.location.href='/api/vehiculo'">Vehiculos</span></li>
+                <li class="menu-item"><i class="fa-solid fa-paint-roller"></i><span onclick="window.location.href='/api/colores'">Colores Vehiculares</span></li>
+                <li class="menu-item"><i class="fa-solid fa-caravan"></i><span onclick="window.location.href='/api/marca'">Marcas</span></li>
+                <li class="menu-item"><i class="fa-solid fa-car"></i><span onclick="window.location.href='/api/modelos'">Modelos</span></li>
+                <li class="menu-item"><i class="fa-solid fa-oil-can"></i><span onclick="window.location.href='/api/motores'">Motores</span></li>
+                <li class="menu-item"><i class="fa-duotone fa-solid fa-gear"></i><span onclick="window.location.href='/api/transmisionv2'">Transmisiones</span></li>
+                <li class="menu-item"><i class="fa-solid fa-award"></i><span onclick="window.location.href='/api/garantia'">Garantías</span></li>
+                <li class="menu-item"><i class="fa-solid fa-users"></i><span onclick="window.location.href='/api/empleado'">Empleados</span></li>
+                <li class="menu-item"><i class="fa-solid fa-address-card"></i><span onclick="window.location.href='/api/contacto_empleado'">Contacto empleados</span></li>
+                <li class="menu-item"><i class="fa-solid fa-address-book"></i><span onclick="window.location.href='/api/cargos'">Jerarquia de empleados</span></li>
+            </ul>
+        </div>
+        <div class="transacciones">
+            <h3>Transacciones</h3>
+            <ul class="menu">
+                <li class="menu-item"><i class="fa-brands fa-sellsy"></i><span onclick="window.location.href='/api/ventas'">Consulta de Ventas</span></li>
+                <li class="menu-item"><i class="fa-solid fa-money-bill"></i><span onclick="window.location.href='/api/metodos'">Metodos de pago</span></li>
+            </ul>
+        </div>
+    </div>
+    <div class="content">
+        <div class="card card-table">
+            <h1>Empleados</h1>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th style="display:none;">ID</th>
+                        <th style="display:none;">ID dir</th>
+                        <th style="display:none;">Clave Concesionaria</th>
+                        <th>Nombre</th>
+                        <th>Apellido Paterno</th>
+                        <th>Apellido Materno</th>
+                        <th>RFC</th>
+                        <th>Fecha de Nacimiento</th>
+                        <th>Cargo</th>
+                        <th>Nombre Concesionaria</th>
+                        <th>Correo</th>
+                        <th>Teléfono</th>
+                        <th>Estado</th>
+                        <th>Municipio</th>
+                        <th>CP</th>
+                        <th>Calle</th>
+                        <th>No. Interior</th>
+                        <th>No. Exterior</th>
+                        <th class="no-border"></th>
+                        <th class="no-border"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% data.forEach(row => { %>
+                        <tr>
+                            <td style="display:none;">
+                                <%= row.ID_E %>
+                            </td>
+                            <td style="display:none;">
+                                <%= row.ID %>
+                            </td>
+                            <td style="display:none;">
+                                <%= row.CLAVE %>
+                            </td>
+                            <td>
+                                <%= row.NOMBRE %>
+                            </td>
+                            <td>
+                                <%= row.APELLIDO_PAT %>
+                            </td>
+                            <td>
+                                <%= row.APELLIDO_MAT %>
+                            </td>
+                            <td>
+                                <%= row.RFC %>
+                            </td>
+                            <td>
+                                <%= new Date(row.FECHA_NACI).toISOString().split('T')[0] %>
+                            </td>
+                            <td>
+                                <%= row.CARGO %>
+                            </td>
+                            <td>
+                                <%= row.CONCESIONARIA_NOMBRE %>
+                            </td>
+                            <td>
+                                <%= row.CORREO %>
+                            </td>
+                            <td>
+                                <%= row.TELEFONO %>
+                            </td>
+                            <td>
+                                <%= row.ESTADO %>
+                            </td>
+                            <td>
+                                <%= row.ALC_MUN %>
+                            </td>
+                            <td>
+                                <%= row.CP %>
+                            </td>
+                            <td>
+                                <%= row.CALLE %>
+                            </td>
+                            <td>
+                                <%= row.NO_INT %>
+                            </td>
+                            <td>
+                                <%= row.NO_EXT %>
+                            </td>
+                            <td class="no-border" style="text-align: center;">
+                                <button class="table-button" onclick="fetchAndFillEditForm('<%= row.ID_E %>')"><i class="fa-solid fa-pen-to-square"></i></button>
+                            </td>
+                            <td class="no-border" style="text-align: center;">
+                                <form action="/api/empleado/<%= row.ID_E %>/delete" method="POST" style="display:inline;">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="table-button"><i class="fa-solid fa-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+        </div>
+        <div class="form-container">
+            <div class="card card-form">
+                <h2>Agregar Empleado</h2>
+                <form action="/api/empleado" method="POST">
+                    <div class="form-group">
+                        <label for="id_e">ID:</label>
+                        <input type="text" id="id_e" name="id_e" placeholder="ID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="clave">Concesionaria:</label>
+                        <select id="clave" name="clave" required>
+                            <option value="">Seleccione una concesionaria</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido_pat">Apellido Paterno:</label>
+                        <input type="text" id="apellido_pat" name="apellido_pat" placeholder="Apellido Paterno" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido_mat">Apellido Materno:</label>
+                        <input type="text" id="apellido_mat" name="apellido_mat" placeholder="Apellido Materno" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rfc">RFC:</label>
+                        <input type="text" id="rfc" name="rfc" placeholder="RFC" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_naci">Fecha de Nacimiento:</label>
+                        <input type="date" id="fecha_naci" name="fecha_naci" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cargo_empleado_id">Cargo:</label>
+                        <select id="cargo_empleado_id" name="cargo_empleado_id" required>
+                            <option value="">Seleccione un cargo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="contacto_empleado_id">Contacto:</label>
+                        <select id="contacto_empleado_id" name="contacto_empleado_id" required>
+                            <option value="">Seleccione un contacto</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="direccion_id">Dirección:</label>
+                        <select id="direccion_id" name="direccion_id" required>
+                            <option value="">Seleccione una dirección</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Agregar</button>
+                </form>
+            </div>
+
+            <div class="card card-form">
+                <h2>Editar Empleado</h2>
+                <form id="editForm" action="/api/empleado/update" method="POST">
+                    <input type="hidden" name="_method" value="PUT">
+                    <div class="form-group">
+                        <label for="edit_id_e">ID:</label>
+                        <input type="text" id="edit_id_e" name="id_e" placeholder="ID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_clave">Clave Concesionaria:</label>
+                        <select id="edit_clave" name="clave" required>
+                            <option value="">Seleccione una concesionaria</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_nombre">Nombre:</label>
+                        <input type="text" id="edit_nombre" name="nombre" placeholder="Nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_apellido_pat">Apellido Paterno:</label>
+                        <input type="text" id="edit_apellido_pat" name="apellido_pat" placeholder="Apellido Paterno" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_apellido_mat">Apellido Materno:</label>
+                        <input type="text" id="edit_apellido_mat" name="apellido_mat" placeholder="Apellido Materno" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_rfc">RFC:</label>
+                        <input type="text" id="edit_rfc" name="rfc" placeholder="RFC" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_fecha_naci">Fecha de Nacimiento:</label>
+                        <input type="date" id="edit_fecha_naci" name="fecha_naci" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_cargo_empleado_id">Cargo:</label>
+                        <select id="edit_cargo_empleado_id" name="cargo_empleado_id" required>
+                            <option value="">Seleccione un cargo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_contacto_empleado_id">Contacto:</label>
+                        <select id="edit_contacto_empleado_id" name="contacto_empleado_id" required>
+                            <option value="">Seleccione un contacto</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_direccion_id">Dirección:</label>
+                        <select id="edit_direccion_id" name="direccion_id" required>
+                            <option value="">Seleccione una dirección</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Editar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function fetchAndFillEditForm(id) {
+            fetch(`/api/empleado/${id}/editData`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('editForm').action = '/api/empleado/' + data.ID_E + '/update';
+                    fillEditField('edit_id_e', data.ID_E);
+                    fillEditField('edit_nombre', data.NOMBRE);
+                    fillEditField('edit_apellido_pat', data.APELLIDO_PAT);
+                    fillEditField('edit_apellido_mat', data.APELLIDO_MAT);
+                    fillEditField('edit_rfc', data.RFC);
+                    fillEditField('edit_fecha_naci', data.FECHA_NACI ? new Date(data.FECHA_NACI).toISOString().split('T')[0] : '');
+                    document.getElementById('edit_clave').value = data.CONCESIONARIA_CLAVE;
+                    document.getElementById('edit_cargo_empleado_id').value = data.CARGO_EMPLEADO_ID;
+                    document.getElementById('edit_contacto_empleado_id').value = data.CONTACTO_EMPLEADO_ID;
+                    document.getElementById('edit_direccion_id').value = data.DIRECCION_ID;
+                })
+                .catch(error => console.error('Error al obtener los datos:', error));
+        }
+
+        function fillEditField(fieldId, value) {
+            document.getElementById(fieldId).value = value || '';
+        }
+
+        function populateSelect(url, selectId, textKey) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById(selectId);
+                    select.innerHTML = '<option value="">Seleccione una opción</option>';
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.ID || item.CLAVE;
+                        option.text = item[textKey];
+                        select.add(option);
+                    });
+                })
+                .catch(error => console.error('Error al obtener los datos:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateSelect('/api/tofillemp/cargos', 'cargo_empleado_id', 'CARGO');
+            populateSelect('/api/tofillemp/cargos', 'edit_cargo_empleado_id', 'CARGO');
+            populateSelect('/api/tofillemp/contacto_empleado', 'contacto_empleado_id', 'CORREO');
+            populateSelect('/api/tofillemp/contacto_empleado', 'edit_contacto_empleado_id', 'CORREO');
+            populateSelect('/api/tofillemp/direccion', 'direccion_id', 'CALLE');
+            populateSelect('/api/tofillemp/direccion', 'edit_direccion_id', 'CALLE');
+            populateSelect('/api/tofillemp/concesionarias', 'clave', 'NOMBRE');
+            populateSelect('/api/tofillemp/concesionarias', 'edit_clave', 'NOMBRE');
+        });
+    </script>
+</body>
+
+</html>

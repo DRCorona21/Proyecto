@@ -23,7 +23,7 @@
         <div class="transacciones">
             <h3>Concesionaria</h3>
             <ul class="menu">
-                <li class="menu-item"><i class="fas fa-home"></i><span onclick="window.location.href='/api/direccion'">Concesionarias</span></li>
+                <li class="menu-item"><i class="fas fa-home"></i><span onclick="window.location.href='/api/direccion'">Direcciones</span></li>
                 <li class="menu-item"><i class="fa-solid fa-car"></i><span onclick="window.location.href='/api/vehiculo'">Vehiculos</span></li>
                 <li class="menu-item"><i class="fa-solid fa-paint-roller"></i><span onclick="window.location.href='/api/colores'">Colores Vehiculares</span></li>
                 <li class="menu-item"><i class="fa-solid fa-caravan"></i><span onclick="window.location.href='/api/marca'">Marcas</span></li>
@@ -31,7 +31,7 @@
                 <li class="menu-item"><i class="fa-solid fa-oil-can"></i><span onclick="window.location.href='/api/motores'">Motores</span></li>
                 <li class="menu-item"><i class="fa-duotone fa-solid fa-gear"></i><span onclick="window.location.href='/api/transmisionv2'">Transmisiones</span></li>
                 <li class="menu-item"><i class="fa-solid fa-award"></i><span onclick="window.location.href='/api/garantia'">Garantías</span></li>
-                <li class="menu-item"><i class="fa-solid fa-users"></i><span>Empleados</span></li>
+                <li class="menu-item"><i class="fa-solid fa-users"></i><span onclick="window.location.href='/api/empleado'">Empleados</span></li>
                 <li class="menu-item"><i class="fa-solid fa-address-card"></i><span onclick="window.location.href='/api/contacto_empleado'">Contacto empleados</span></li>
                 <li class="menu-item"><i class="fa-solid fa-address-book"></i><span onclick="window.location.href='/api/cargos'">Jerarquia de empleados</span></li>
             </ul>
@@ -39,7 +39,7 @@
         <div class="transacciones">
             <h3>Transacciones</h3>
             <ul class="menu">
-                <li class="menu-item"><i class="fa-brands fa-sellsy"></i><span>Ventas</span></li>
+                <li class="menu-item"><i class="fa-brands fa-sellsy"></i><span onclick="window.location.href='/api/ventas'">Consulta de Ventas</span></li>
                 <li class="menu-item"><i class="fa-solid fa-money-bill"></i><span onclick="window.location.href='/api/metodos'">Metodos de pago</span></li>
             </ul>
         </div>
@@ -130,7 +130,7 @@
                                 <%= row.PROVEEDOR %>
                             </td>
                             <td class="no-border" style="text-align: center;">
-                                <button class="table-button" onclick="fillEditForm('<%= row.ID_V %>', '<%= row.VIN %>', '<%= row.MARCA_ID %>', '<%= row.MODELO_ID %>', '<%= row.ANIO %>', '<%= row.COLOR_ID %>', '<%= row.TIPO_ID %>', '<%= row.LINEA %>', '<%= row.TRANSMISION_ID %>', '<%= row.PRECIO %>', '<%= row.ESTADO_V_ID %>', '<%= row.FECHA_INGRESO %>', '<%= row.NUM_MOTOR %>', '<%= row.TIPO_MOTOR_ID %>', '<%= row.CAPACIDAD %>', '<%= row.NUM_CILINDROS %>', '<%= row.NUM_PUERTAS %>', '<%= row.PROVEEDOR_ID_FK %>')"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="table-button" onclick="fetchAndFillEditForm('<%= row.ID_V %>')"><i class="fa-solid fa-pen-to-square"></i></button>
                             </td>
                             <td class="no-border" style="text-align: center;">
                                 <form action="/api/vehiculo/<%= row.ID_V %>/delete" method="POST" style="display:inline;">
@@ -380,28 +380,36 @@
             fetchOptions('/api/proveedores', 'edit_proveedor_id_fk', 'ID_P');
         });
 
-        function fillEditForm(id_v, vin, marca_id, modelo_id, anio, color_id, tipo_id, linea, transmision_id, precio, estado_v_id, fecha_ingreso, num_motor, tipo_motor_id, capacidad, num_cilindros, num_puertas, proveedor_id_fk) {
-            document.getElementById('editForm').action = '/api/vehiculo/' + id_v + '/update';
-            document.getElementById('edit_id_v').value = id_v;
-            document.getElementById('edit_vin').value = vin;
-            document.getElementById('edit_marca_id').value = marca_id;
-            fetchModelos(marca_id, 'edit_modelo_id').then(() => {
-                document.getElementById('edit_modelo_id').value = modelo_id;
-            });
-            document.getElementById('edit_anio').value = anio;
-            document.getElementById('edit_color_id').value = color_id;
-            document.getElementById('edit_tipo_id').value = tipo_id;
-            document.getElementById('edit_linea').value = linea;
-            document.getElementById('edit_transmision_id').value = transmision_id;
-            document.getElementById('edit_precio').value = precio;
-            document.getElementById('edit_estado_v_id').value = estado_v_id;
-            document.getElementById('edit_fecha_ingreso').value = new Date(fecha_ingreso).toISOString().split('T')[0];
-            document.getElementById('edit_num_motor').value = num_motor;
-            document.getElementById('edit_tipo_motor_id').value = tipo_motor_id;
-            document.getElementById('edit_capacidad').value = capacidad;
-            document.getElementById('edit_num_cilindros').value = num_cilindros;
-            document.getElementById('edit_num_puertas').value = num_puertas;
-            document.getElementById('edit_proveedor_id_fk').value = proveedor_id_fk;
+        function fetchAndFillEditForm(id) {
+            fetch(`/api/vehiculo/${id}/editData`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('editForm').action = '/api/vehiculo/' + data.ID_V + '/update';
+                    fillEditField('edit_id_v', data.ID_V);
+                    fillEditField('edit_vin', data.VIN);
+                    fillEditField('edit_anio', data.ANIO);
+                    fillEditField('edit_linea', data.LINEA);
+                    fillEditField('edit_precio', data.PRECIO);
+                    fillEditField('edit_fecha_ingreso', data.FECHA_INGRESO ? new Date(data.FECHA_INGRESO).toISOString().split('T')[0] : '');
+                    fillEditField('edit_num_motor', data.NUM_MOTOR);
+                    fillEditField('edit_capacidad', data.CAPACIDAD);
+                    fillEditField('edit_num_cilindros', data.NUM_CILINDROS);
+                    fillEditField('edit_num_puertas', data.NUM_PUERTAS);
+                    fillEditField('edit_proveedor_id_fk', data.PROVEEDOR_ID_FK);
+                    fillEditField('edit_marca_id', data.MARCA_ID);
+                    fetchModelos(data.MARCA_ID, 'edit_modelo_id').then(() => {
+                        fillEditField('edit_modelo_id', data.MODELO_ID);
+                    });
+                    fillEditField('edit_color_id', data.COLOR_ID);
+                    fillEditField('edit_tipo_id', data.TIPO_ID);
+                    fillEditField('edit_transmision_id', data.TRANSMISION_ID);
+                    fillEditField('edit_estado_v_id', data.ESTADO_V_ID);
+                    fillEditField('edit_tipo_motor_id', data.TIPO_MOTOR_ID);
+                });
+        }
+
+        function fillEditField(fieldId, value) {
+            document.getElementById(fieldId).value = value;
         }
     </script>
 </body>

@@ -23,7 +23,7 @@
         <div class="transacciones">
             <h3>Concesionaria</h3>
             <ul class="menu">
-                <li class="menu-item"><i class="fas fa-home"></i><span onclick="window.location.href='/api/direccion'">Concesionarias</span></li>
+                <li class="menu-item"><i class="fas fa-home"></i><span onclick="window.location.href='/api/direccion'">Direcciones</span></li>
                 <li class="menu-item"><i class="fa-solid fa-car"></i><span onclick="window.location.href='/api/vehiculo'">Vehiculos</span></li>
                 <li class="menu-item"><i class="fa-solid fa-paint-roller"></i><span onclick="window.location.href='/api/colores'">Colores Vehiculares</span></li>
                 <li class="menu-item"><i class="fa-solid fa-caravan"></i><span onclick="window.location.href='/api/marca'">Marcas</span></li>
@@ -31,7 +31,7 @@
                 <li class="menu-item"><i class="fa-solid fa-oil-can"></i><span onclick="window.location.href='/api/motores'">Motores</span></li>
                 <li class="menu-item"><i class="fa-duotone fa-solid fa-gear"></i><span onclick="window.location.href='/api/transmisionv2'">Transmisiones</span></li>
                 <li class="menu-item"><i class="fa-solid fa-award"></i><span onclick="window.location.href='/api/garantia'">Garantías</span></li>
-                <li class="menu-item"><i class="fa-solid fa-users"></i><span>Empleados</span></li>
+                <li class="menu-item"><i class="fa-solid fa-users"></i><span onclick="window.location.href='/api/empleado'">Empleados</span></li>
                 <li class="menu-item"><i class="fa-solid fa-address-card"></i><span onclick="window.location.href='/api/contacto_empleado'">Contacto empleados</span></li>
                 <li class="menu-item"><i class="fa-solid fa-address-book"></i><span onclick="window.location.href='/api/cargos'">Jerarquia de empleados</span></li>
             </ul>
@@ -39,7 +39,7 @@
         <div class="transacciones">
             <h3>Transacciones</h3>
             <ul class="menu">
-                <li class="menu-item"><i class="fa-brands fa-sellsy"></i><span>Ventas</span></li>
+                <li class="menu-item"><i class="fa-brands fa-sellsy"></i><span onclick="window.location.href='/api/ventas'">Consulta de Ventas</span></li>
                 <li class="menu-item"><i class="fa-solid fa-money-bill"></i><span onclick="window.location.href='/api/metodos'">Metodos de pago</span></li>
             </ul>
         </div>
@@ -50,7 +50,7 @@
             <table border="1">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th style="display:none;">ID</th>
                         <th>ESTADO</th>
                         <th>ALC_MUN</th>
                         <th>COLONIA</th>
@@ -65,7 +65,7 @@
                 <tbody>
                     <% data.forEach(row => { %>
                         <tr>
-                            <td>
+                            <td style="display:none;">
                                 <%= row.ID %>
                             </td>
                             <td>
@@ -108,12 +108,12 @@
             <div class="card card-form">
                 <h2>Agregar Dirección</h2>
                 <form action="/api/direccion" method="POST">
-                    <div class="form-group">
+                    <div class="form-group" style="display:none;">
                         <label for="direccion_id">ID:</label>
                         <input type="text" id="direccion_id" name="direccion_id" placeholder="ID" required>
                     </div>
                     <div class="form-group">
-                        <label for="estado_id">Estado ID:</label>
+                        <label for="estado_id">Estado:</label>
                         <select id="estado_id" name="estado_id" required>
                             <option value="">Seleccione un estado</option>
                         </select>
@@ -152,9 +152,9 @@
                 <h2>Editar Dirección</h2>
                 <form id="editForm" action="/api/direccion/update" method="POST">
                     <input type="hidden" name="_method" value="PUT">
-                    <div class="form-group">
+                    <div class="form-group" style="display:none;">
                         <label for="edit_direccion_id">ID:</label>
-                        <input type="text" id="edit_direccion_id" name="direccion_id" placeholder="ID" readonly>
+                        <input type="text" id="edit_direccion_id" name="direccion_id" placeholder="ID" required>
                     </div>
                     <div class="form-group">
                         <label for="edit_estado_id">Estado:</label>
@@ -226,11 +226,25 @@
                 .catch(error => console.error('Error al obtener los datos:', error));
         }
 
+        function getMaxId() {
+            const rows = document.querySelectorAll('tbody tr');
+            let maxId = 0;
+            rows.forEach(row => {
+                const id = parseInt(row.cells[0].textContent);
+                if (id > maxId) {
+                    maxId = id;
+                }
+            });
+            return maxId;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             populateSelect('/api/estados', 'estado_id');
             populateSelect('/api/estados', 'edit_estado_id');
             populateSelect('/api/municipios', 'alc_mun_id');
             populateSelect('/api/municipios', 'edit_alc_mun_id');
+            const maxId = getMaxId() + 1;
+            document.getElementById('direccion_id').value = maxId;
         });
     </script>
 </body>

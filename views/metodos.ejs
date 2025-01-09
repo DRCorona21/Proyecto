@@ -24,7 +24,7 @@
         <div class="transacciones">
             <h3>Concesionaria</h3>
             <ul class="menu">
-                <li class="menu-item"><i class="fas fa-home"></i><span onclick="window.location.href='/api/direccion'">Concesionarias</span></li>
+                <li class="menu-item"><i class="fas fa-home"></i><span onclick="window.location.href='/api/direccion'">Direcciones</span></li>
                 <li class="menu-item"><i class="fa-solid fa-car"></i><span onclick="window.location.href='/api/vehiculo'">Vehiculos</span></li>
                 <li class="menu-item"><i class="fa-solid fa-paint-roller"></i><span onclick="window.location.href='/api/colores'">Colores Vehiculares</span></li>
                 <li class="menu-item"><i class="fa-solid fa-caravan"></i><span onclick="window.location.href='/api/marca'">Marcas</span></li>
@@ -32,7 +32,7 @@
                 <li class="menu-item"><i class="fa-solid fa-oil-can"></i><span onclick="window.location.href='/api/motores'">Motores</span></li>
                 <li class="menu-item"><i class="fa-duotone fa-solid fa-gear"></i><span onclick="window.location.href='/api/transmisionv2'">Transmisiones</span></li>
                 <li class="menu-item"><i class="fa-solid fa-award"></i><span onclick="window.location.href='/api/garantia'">Garantías</span></li>
-                <li class="menu-item"><i class="fa-solid fa-users"></i><span>Empleados</span></li>
+                <li class="menu-item"><i class="fa-solid fa-users"></i><span onclick="window.location.href='/api/empleado'">Empleados</span></li>
                 <li class="menu-item"><i class="fa-solid fa-address-card"></i><span onclick="window.location.href='/api/contacto_empleado'">Contacto empleados</span></li>
                 <li class="menu-item"><i class="fa-solid fa-address-book"></i><span onclick="window.location.href='/api/cargos'">Jerarquia de empleados</span></li>
             </ul>
@@ -40,7 +40,7 @@
         <div class="transacciones">
             <h3>Transacciones</h3>
             <ul class="menu">
-                <li class="menu-item"><i class="fa-brands fa-sellsy"></i><span>Ventas</span></li>
+                <li class="menu-item"><i class="fa-brands fa-sellsy"></i><span onclick="window.location.href='/api/ventas'">Consulta de Ventas</span></li>
                 <li class="menu-item"><i class="fa-solid fa-money-bill"></i><span onclick="window.location.href='/api/metodos'">Metodos de pago</span></li>
             </ul>
         </div>
@@ -51,7 +51,7 @@
             <table border="1">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th style="display:none;">ID</th>
                         <th>METODO</th>
                         <th class="no-border"></th>
                         <th class="no-border"></th>
@@ -60,7 +60,7 @@
                 <tbody>
                     <% data.forEach(row => { %>
                         <tr>
-                            <td>
+                            <td style="display:none;">
                                 <%= row.ID %>
                             </td>
                             <td>
@@ -85,7 +85,7 @@
             <div class="card card-form">
                 <h2>Agregar Método de Pago</h2>
                 <form action="/api/metodos" method="POST">
-                    <div class="form-group">
+                    <div class="form-group" style="display:none;">
                         <label for="id">ID:</label>
                         <input type="text" id="id" name="id" placeholder="ID" required>
                     </div>
@@ -101,9 +101,9 @@
                 <h2>Editar Método de Pago</h2>
                 <form id="editForm" action="/api/metodos/%/update" method="POST">
                     <input type="hidden" name="_method" value="PUT">
-                    <div class="form-group">
+                    <div class="form-group" style="display:none;">
                         <label for="edit_id">ID:</label>
-                        <input type="text" id="edit_id" name="id" placeholder="ID" readonly>
+                        <input type="text" id="edit_id" name="id" placeholder="ID" required>
                     </div>
                     <div class="form-group">
                         <label for="edit_metodo">METODO:</label>
@@ -120,6 +120,23 @@
             document.getElementById('edit_id').value = id;
             document.getElementById('edit_metodo').value = metodo;
         }
+
+        function getMaxId() {
+            const rows = document.querySelectorAll('tbody tr');
+            let maxId = 0;
+            rows.forEach(row => {
+                const id = parseInt(row.cells[0].textContent);
+                if (id > maxId) {
+                    maxId = id;
+                }
+            });
+            return maxId;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const maxId = getMaxId() + 1;
+            document.getElementById('id').value = maxId;
+        });
     </script>
 </body>
 

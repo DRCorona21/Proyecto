@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estado general de ventas</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="center-title" onclick="window.location.href='/'">Inicio</div>
+        <div class="profile-section">
+            <div class="title">Administrador</div>
+            <div class="profile-icon"></div>
+        </div>
+    </div>
+    <div class="sidebar">
+        <div class="logo" onclick="window.location.href='/'"><i class="fa-sharp-duotone fa-solid fa-car-side"></i>Concesionaria Compitas</div>
+
+        <div class="transacciones">
+            <h3>Concesionaria</h3>
+            <ul class="menu">
+                <li class="menu-item"><i class="fas fa-home"></i><span onclick="window.location.href='/api/direccion'">Direcciones</span></li>
+                <li class="menu-item"><i class="fa-solid fa-car"></i><span onclick="window.location.href='/api/vehiculo'">Vehiculos</span></li>
+                <li class="menu-item"><i class="fa-solid fa-paint-roller"></i><span onclick="window.location.href='/api/colores'">Colores Vehiculares</span></li>
+                <li class="menu-item"><i class="fa-solid fa-caravan"></i><span onclick="window.location.href='/api/marca'">Marcas</span></li>
+                <li class="menu-item"><i class="fa-solid fa-car"></i><span onclick="window.location.href='/api/modelos'">Modelos</span></li>
+                <li class="menu-item"><i class="fa-solid fa-oil-can"></i><span onclick="window.location.href='/api/motores'">Motores</span></li>
+                <li class="menu-item"><i class="fa-duotone fa-solid fa-gear"></i><span onclick="window.location.href='/api/transmisionv2'">Transmisiones</span></li>
+                <li class="menu-item"><i class="fa-solid fa-award"></i><span onclick="window.location.href='/api/garantia'">Garantías</span></li>
+                <li class="menu-item"><i class="fa-solid fa-users"></i><span onclick="window.location.href='/api/empleado'">Empleados</span></li>
+                <li class="menu-item"><i class="fa-solid fa-address-card"></i><span onclick="window.location.href='/api/contacto_empleado'">Contacto empleados</span></li>
+                <li class="menu-item"><i class="fa-solid fa-address-book"></i><span onclick="window.location.href='/api/cargos'">Jerarquia de empleados</span></li>
+            </ul>
+        </div>
+        <div class="transacciones">
+            <h3>Transacciones</h3>
+            <ul class="menu">
+                <li class="menu-item"><i class="fa-brands fa-sellsy"></i><span onclick="window.location.href='/api/ventas'">Consulta de Ventas</span></li>
+                <li class="menu-item"><i class="fa-solid fa-money-bill"></i><span onclick="window.location.href='/api/metodos'">Metodos de pago</span></li>
+            </ul>
+        </div>
+    </div>
+    <div class="content">
+        <div class="card card-table">
+            <h1>Ventas Realizadas</h1>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>CLAVE VENTA</th>
+                        <th>VIN</th>
+                        <th>MARCA</th>
+                        <th>MODELO</th>
+                        <th>AÑO</th>
+                        <th>COLOR</th>
+                        <th>TIPO</th>
+                        <th>LINEA</th>
+                        <th>TRANSMISIÓN</th>
+                        <th>PRECIO</th>
+                        <th>ESTADO VEHÍCULO</th>
+                        <th>FECHA INGRESO</th>
+                        <th>NÚMERO MOTOR</th>
+                        <th>TIPO MOTOR</th>
+                        <th>CAPACIDAD</th>
+                        <th>CILINDROS</th>
+                        <th>PUERTAS</th>
+                        <th>PROVEEDOR</th>
+                        <th>FECHA VENTA</th>
+                        <th>FECHA ENTREGA</th>
+                        <th>FACTURA</th>
+                        <th>CLIENTE</th>
+                        <th>EMPLEADO</th>
+                        <th>CONCESIONARIA</th>
+                        <th>PAGINA WEB</th>
+                        <th>RFC</th>
+                        <th>GARANTIA</th>
+                        <th>METODO PAGO</th>
+                        <th class="no-border"></th>
+                        <th class="no-border"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% data.forEach(row => { %>
+                        <tr>
+                            <td>
+                                <%= row.CLAVE %>
+                            </td>
+                            <td>
+                                <%= row.VIN %>
+                            </td>
+                            <td>
+                                <%= row.MARCA %>
+                            </td>
+                            <td>
+                                <%= row.MODELO %>
+                            </td>
+                            <td>
+                                <%= row.ANIO %>
+                            </td>
+                            <td>
+                                <%= row.COLOR %>
+                            </td>
+                            <td>
+                                <%= row.TIPO %>
+                            </td>
+                            <td>
+                                <%= row.LINEA %>
+                            </td>
+                            <td>
+                                <%= row.TRANSMISION %>
+                            </td>
+                            <td>
+                                <%= row.PRECIO %>
+                            </td>
+                            <td>
+                                <%= row.ESTADO %>
+                            </td>
+                            <td>
+                                <%= new Date(row.FECHA_INGRESO).toISOString().split('T')[0] %>
+                            </td>
+                            <td>
+                                <%= row.NUM_MOTOR %>
+                            </td>
+                            <td>
+                                <%= row.TIPO_MOTOR %>
+                            </td>
+                            <td>
+                                <%= row.CAPACIDAD %>
+                            </td>
+                            <td>
+                                <%= row.NUM_CILINDROS %>
+                            </td>
+                            <td>
+                                <%= row.NUM_PUERTAS %>
+                            </td>
+                            <td>
+                                <%= row.PROVEEDOR %>
+                            </td>
+                            <td>
+                                <%= new Date(row.FECHA_VENTA).toISOString().split('T')[0] %>
+                            </td>
+                            <td>
+                                <%= new Date(row.FECHA_ENTREGA).toISOString().split('T')[0] %>
+                            </td>
+                            <td>
+                                <%= row.NO_FACTURA %>
+                            </td>
+                            <td>
+                                <%= row.NOMBRE_CLIENTE %>
+                            </td>
+                            <td>
+                                <%= row.NOMBRE_EMPLEADO %>
+                            </td>
+                            <td>
+                                <%= row.NOMBRE_CONCESIONARIA %>
+                            </td>
+                            <td>
+                                <%= row.PAGINA_WEB %>
+                            </td>
+                            <td>
+                                <%= row.RFC %>
+                            </td>
+                            <td>
+                                <%= row.GARANTIA %>
+                            </td>
+                            <td>
+                                <%= row.METODO %>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
+
+</body>
+
+</html>

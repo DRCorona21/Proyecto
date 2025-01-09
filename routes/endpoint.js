@@ -889,4 +889,81 @@ router.post('/motores/:id/update', async(req, res) => {
     }
 });
 
+// Insertar un nuevo empleado
+router.post('/empleado', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { id_e, clave, nombre, apellido_pat, apellido_mat, rfc, fecha_naci, cargo_empleado_id, contacto_empleado_id, direccion_id } = req.body;
+
+        // Verificar si el ID ya existe
+        const checkResult = await connection.execute(
+            `SELECT COUNT(*) AS COUNT FROM EMPLEADO WHERE ID_E = :id_e`, { id_e }
+        );
+
+        if (checkResult.rows[0].COUNT > 0) {
+            res.send(res.locals.showAlert('Error: El ID ya existe en la base de datos.'));
+            return;
+        }
+
+        await connection.execute(
+            `INSERT INTO EMPLEADO (ID_E, CONCESIONARIA_CLAVE, NOMBRE, APELLIDO_PAT, APELLIDO_MAT, RFC, FECHA_NACI, CARGO_EMPLEADO_ID, CONTACTO_EMPLEADO_ID, DIRECCION_ID) 
+            VALUES (:id_e, :clave, :nombre, :apellido_pat, :apellido_mat, :rfc, TO_DATE(:fecha_naci, 'YYYY-MM-DD'), :cargo_empleado_id, :contacto_empleado_id, :direccion_id)`, { id_e, clave, nombre, apellido_pat, apellido_mat, rfc, fecha_naci, cargo_empleado_id, contacto_empleado_id, direccion_id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/empleado');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al insertar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Eliminar un empleado
+router.post('/empleado/:id/delete', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const id_e = req.params.id;
+
+        await connection.execute(
+            `DELETE FROM EMPLEADO WHERE ID_E = :id_e`, { id_e }, { autoCommit: true }
+        );
+
+        res.redirect('/api/empleado');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al eliminar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Actualizar un empleado
+router.post('/empleado/:id/update', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { clave, nombre, apellido_pat, apellido_mat, rfc, fecha_naci, cargo_empleado_id, contacto_empleado_id, direccion_id } = req.body;
+        const id_e = req.params.id;
+
+        await connection.execute(
+            `UPDATE EMPLEADO SET CONCESIONARIA_CLAVE = :clave, NOMBRE = :nombre, APELLIDO_PAT = :apellido_pat, APELLIDO_MAT = :apellido_mat, RFC = :rfc, FECHA_NACI = TO_DATE(:fecha_naci, 'YYYY-MM-DD'), 
+            CARGO_EMPLEADO_ID = :cargo_empleado_id, CONTACTO_EMPLEADO_ID = :contacto_empleado_id, DIRECCION_ID = :direccion_id 
+            WHERE ID_E = :id_e`, { clave, nombre, apellido_pat, apellido_mat, rfc, fecha_naci, cargo_empleado_id, contacto_empleado_id, direccion_id, id_e }, { autoCommit: true }
+        );
+
+        res.redirect('/api/empleado');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al actualizar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
 module.exports = router;
