@@ -26,7 +26,7 @@
                 <li class="menu-item"><i class="fas fa-home"></i><span onclick="window.location.href='/api/direccion'">Concesionarias</span></li>
                 <li class="menu-item"><i class="fa-solid fa-car"></i><span onclick="window.location.href='/api/vehiculo'">Vehiculos</span></li>
                 <li class="menu-item"><i class="fa-solid fa-paint-roller"></i><span onclick="window.location.href='/api/colores'">Colores Vehiculares</span></li>
-                <li class="menu-item"><i class="fa-solid fa-car-bus"></i><span onclick="window.location.href='/api/marca'">Marcas</span></li>
+                <li class="menu-item"><i class="fa-solid fa-caravan"></i><span onclick="window.location.href='/api/marca'">Marcas</span></li>
                 <li class="menu-item"><i class="fa-solid fa-car"></i><span onclick="window.location.href='/api/modelos'">Modelos</span></li>
                 <li class="menu-item"><i class="fa-solid fa-award"></i><span onclick="window.location.href='/api/garantia'">Garantías</span></li>
                 <li class="menu-item"><i class="fa-solid fa-users"></i><span>Empleados</span></li>
@@ -112,11 +112,15 @@
                     </div>
                     <div class="form-group">
                         <label for="estado_id">Estado ID:</label>
-                        <input type="text" id="estado_id" name="estado_id" placeholder="Estado ID" required>
+                        <select id="estado_id" name="estado_id" required>
+                            <option value="">Seleccione un estado</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="alc_mun_id">Alcaldía/Municipio ID:</label>
-                        <input type="text" id="alc_mun_id" name="alc_mun_id" placeholder="Alcaldía/Municipio ID" required>
+                        <select id="alc_mun_id" name="alc_mun_id" required>
+                            <option value="">Seleccione un municipio</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="colonia">Colonia:</label>
@@ -151,12 +155,16 @@
                         <input type="text" id="edit_direccion_id" name="direccion_id" placeholder="ID" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="edit_estado_id">Estado ID:</label>
-                        <input type="text" id="edit_estado_id" name="estado_id" placeholder="Estado ID" required>
+                        <label for="edit_estado_id">Estado:</label>
+                        <select id="edit_estado_id" name="estado_id" required>
+                            <option value="">Seleccione un estado</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label for="edit_alc_mun_id">Alcaldía/Municipio ID:</label>
-                        <input type="text" id="edit_alc_mun_id" name="alc_mun_id" placeholder="Alcaldía/Municipio ID" required>
+                        <label for="edit_alc_mun_id">Alcaldía/Municipio:</label>
+                        <select id="edit_alc_mun_id" name="alc_mun_id" required>
+                            <option value="">Seleccione un municipio</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="edit_colonia">Colonia:</label>
@@ -200,6 +208,28 @@
                 })
                 .catch(error => console.error('Error al obtener los datos:', error));
         }
+
+        function populateSelect(url, selectId) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById(selectId);
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.ID;
+                        option.text = item.ESTADO || item.ALC_MUN;
+                        select.add(option);
+                    });
+                })
+                .catch(error => console.error('Error al obtener los datos:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateSelect('/api/estados', 'estado_id');
+            populateSelect('/api/estados', 'edit_estado_id');
+            populateSelect('/api/municipios', 'alc_mun_id');
+            populateSelect('/api/municipios', 'edit_alc_mun_id');
+        });
     </script>
 </body>
 

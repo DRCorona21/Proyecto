@@ -27,7 +27,7 @@
                 <li class="menu-item"><i class="fas fa-home"></i><span onclick="window.location.href='/api/direccion'">Concesionarias</span></li>
                 <li class="menu-item"><i class="fa-solid fa-car"></i><span onclick="window.location.href='/api/vehiculo'">Vehiculos</span></li>
                 <li class="menu-item"><i class="fa-solid fa-paint-roller"></i><span onclick="window.location.href='/api/colores'">Colores Vehiculares</span></li>
-                <li class="menu-item"><i class="fa-solid fa-car-bus"></i><span onclick="window.location.href='/api/marca'">Marcas</span></li>
+                <li class="menu-item"><i class="fa-solid fa-caravan"></i><span onclick="window.location.href='/api/marca'">Marcas</span></li>
                 <li class="menu-item"><i class="fa-solid fa-car"></i><span onclick="window.location.href='/api/modelos'">Modelos</span></li>
                 <li class="menu-item"><i class="fa-solid fa-award"></i><span onclick="window.location.href='/api/garantia'">Garantías</span></li>
                 <li class="menu-item"><i class="fa-solid fa-users"></i><span>Empleados</span></li>
@@ -60,10 +60,18 @@
                 <tbody>
                     <% data.forEach(row => { %>
                         <tr>
-                            <td><%= row.ID %></td>
-                            <td><%= row.MODELO %></td>
-                            <td><%= row.MARCA %></td>
-                            <td style="display:none;"><%= row.MARCA_ID %></td>
+                            <td>
+                                <%= row.ID %>
+                            </td>
+                            <td>
+                                <%= row.MODELO %>
+                            </td>
+                            <td>
+                                <%= row.MARCA %>
+                            </td>
+                            <td style="display:none;">
+                                <%= row.MARCA_ID %>
+                            </td>
                             <td class="no-border" style="text-align: center;">
                                 <button class="table-button" onclick="fillEditForm('<%= row.ID %>', '<%= row.MODELO %>', '<%= row.MARCA %>', '<%= row.MARCA_ID %>')"><i class="fa-solid fa-pen-to-square"></i></button>
                             </td>
@@ -83,9 +91,9 @@
             <div class="card card-form">
                 <h2>Agregar Modelo</h2>
                 <form action="/api/modelos" method="POST">
-                    <div class="form-group">
+                    <div class="form-group" style="display:none;">
                         <label for="id">ID:</label>
-                        <input type="text" id="id" name="id" placeholder="ID" required>
+                        <input type="number" id="id" name="id" placeholder="ID" required>
                     </div>
                     <div class="form-group">
                         <label for="modelo">MODELO:</label>
@@ -93,8 +101,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="marca_id">MARCA_ID:</label>
-                        <input type="text" id="marca_id" name="marca_id" placeholder="MARCA_ID" required>
+                        <label for="marca_id">MARCA:</label>
+                        <select id="marca_id" name="marca_id" required>
+                            <option value="">Seleccione una marca</option>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Agregar</button>
                 </form>
@@ -113,8 +123,10 @@
                         <input type="text" id="edit_modelo" name="modelo" placeholder="MODELO" required>
                     </div>
                     <div class="form-group">
-                        <label for="edit_marca_id">MARCA_ID:</label>
-                        <input type="text" id="edit_marca_id" name="marca_id" placeholder="MARCA_ID" required>
+                        <label for="edit_marca_id">MARCA:</label>
+                        <select id="edit_marca_id" name="marca_id" required>
+                            <option value="">Seleccione una marca</option>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Editar</button>
                 </form>
@@ -122,12 +134,55 @@
         </div>
     </div>
     <script>
+        let maxId;
+
+        async function fetchMarcas() {
+            try {
+                const response = await fetch('/api/marcasSelect');
+                const marcas = await response.json();
+                const marcaSelect = document.getElementById('marca_id');
+                const editMarcaSelect = document.getElementById('edit_marca_id');
+
+                marcas.forEach(marca => {
+                    const option = document.createElement('option');
+                    option.value = marca.ID;
+                    option.textContent = marca.MARCA;
+                    marcaSelect.appendChild(option);
+
+                    const editOption = document.createElement('option');
+                    editOption.value = marca.ID;
+                    editOption.textContent = marca.MARCA;
+                    editMarcaSelect.appendChild(editOption);
+                });
+            } catch (error) {
+                console.error('Error fetching marcas:', error);
+            }
+        }
+
+        function getMaxId() {
+            const rows = document.querySelectorAll('tbody tr');
+            let maxId = 0;
+            rows.forEach(row => {
+                const id = parseInt(row.cells[0].textContent);
+                if (id > maxId) {
+                    maxId = id;
+                }
+            });
+            return maxId;
+        }
+
         function fillEditForm(id, modelo, marca, marca_id) {
             document.getElementById('editForm').action = '/api/modelos/' + id + '/update';
             document.getElementById('edit_id').value = id;
             document.getElementById('edit_modelo').value = modelo;
             document.getElementById('edit_marca_id').value = marca_id;
         }
+
+        document.addEventListener('DOMContentLoaded', async() => {
+            await fetchMarcas();
+            maxId = getMaxId() + 1;
+            document.getElementById('id').value = maxId;
+        });
     </script>
 </body>
 

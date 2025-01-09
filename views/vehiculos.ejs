@@ -26,7 +26,7 @@
                 <li class="menu-item"><i class="fas fa-home"></i><span onclick="window.location.href='/api/direccion'">Concesionarias</span></li>
                 <li class="menu-item"><i class="fa-solid fa-car"></i><span onclick="window.location.href='/api/vehiculo'">Vehiculos</span></li>
                 <li class="menu-item"><i class="fa-solid fa-paint-roller"></i><span onclick="window.location.href='/api/colores'">Colores Vehiculares</span></li>
-                <li class="menu-item"><i class="fa-solid fa-car-bus"></i><span onclick="window.location.href='/api/marca'">Marcas</span></li>
+                <li class="menu-item"><i class="fa-solid fa-caravan"></i><span onclick="window.location.href='/api/marca'">Marcas</span></li>
                 <li class="menu-item"><i class="fa-solid fa-car"></i><span onclick="window.location.href='/api/modelos'">Modelos</span></li>
                 <li class="menu-item"><i class="fa-solid fa-award"></i><span onclick="window.location.href='/api/garantia'">Garantías</span></li>
                 <li class="menu-item"><i class="fa-solid fa-users"></i><span>Empleados</span></li>
@@ -50,22 +50,22 @@
                     <tr>
                         <th>ID_V</th>
                         <th>VIN</th>
-                        <th>MARCA ID</th>
-                        <th>MODELO ID</th>
-                        <th>ANIO</th>
-                        <th>COLOR ID</th>
-                        <th>TIPO ID</th>
+                        <th>MARCA</th>
+                        <th>MODELO</th>
+                        <th>AÑO</th>
+                        <th>COLOR</th>
+                        <th>TIPO</th>
                         <th>LINEA</th>
-                        <th>TRANSMISION ID</th>
+                        <th>TRANSMISIÓN</th>
                         <th>PRECIO</th>
-                        <th>ESTADO VEHICULO ID</th>
+                        <th>ESTADO VEHÍCULO</th>
                         <th>FECHA INGRESO</th>
-                        <th>NUM MOTOR</th>
-                        <th>TIPO MOTOR ID</th>
+                        <th>NÚMERO MOTOR</th>
+                        <th>TIPO MOTOR</th>
                         <th>CAPACIDAD</th>
                         <th>CILINDROS</th>
                         <th>PUERTAS</th>
-                        <th>PROVEEDOR ID</th>
+                        <th>PROVEEDOR</th>
                         <th class="no-border"></th>
                         <th class="no-border"></th>
                     </tr>
@@ -80,31 +80,31 @@
                                 <%= row.VIN %>
                             </td>
                             <td>
-                                <%= row.MARCA_ID %>
+                                <%= row.MARCA %>
                             </td>
                             <td>
-                                <%= row.MODELO_ID %>
+                                <%= row.MODELO %>
                             </td>
                             <td>
                                 <%= row.ANIO %>
                             </td>
                             <td>
-                                <%= row.COLOR_ID %>
+                                <%= row.COLOR %>
                             </td>
                             <td>
-                                <%= row.TIPO_ID %>
+                                <%= row.TIPO %>
                             </td>
                             <td>
                                 <%= row.LINEA %>
                             </td>
                             <td>
-                                <%= row.TRANSMISION_ID %>
+                                <%= row.TRANSMISION %>
                             </td>
                             <td>
                                 <%= row.PRECIO %>
                             </td>
                             <td>
-                                <%= row.ESTADO_V_ID %>
+                                <%= row.ESTADO %>
                             </td>
                             <td>
                                 <%= new Date(row.FECHA_INGRESO).toISOString().split('T')[0] %>
@@ -113,7 +113,7 @@
                                 <%= row.NUM_MOTOR %>
                             </td>
                             <td>
-                                <%= row.TIPO_MOTOR_ID %>
+                                <%= row.TIPO_MOTOR %>
                             </td>
                             <td>
                                 <%= row.CAPACIDAD %>
@@ -125,7 +125,7 @@
                                 <%= row.NUM_PUERTAS %>
                             </td>
                             <td>
-                                <%= row.PROVEEDOR_ID_FK %>
+                                <%= row.PROVEEDOR %>
                             </td>
                             <td class="no-border" style="text-align: center;">
                                 <button class="table-button" onclick="fillEditForm('<%= row.ID_V %>', '<%= row.VIN %>', '<%= row.MARCA_ID %>', '<%= row.MODELO_ID %>', '<%= row.ANIO %>', '<%= row.COLOR_ID %>', '<%= row.TIPO_ID %>', '<%= row.LINEA %>', '<%= row.TRANSMISION_ID %>', '<%= row.PRECIO %>', '<%= row.ESTADO_V_ID %>', '<%= row.FECHA_INGRESO %>', '<%= row.NUM_MOTOR %>', '<%= row.TIPO_MOTOR_ID %>', '<%= row.CAPACIDAD %>', '<%= row.NUM_CILINDROS %>', '<%= row.NUM_PUERTAS %>', '<%= row.PROVEEDOR_ID_FK %>')"><i class="fa-solid fa-pen-to-square"></i></button>
@@ -155,40 +155,52 @@
                         <input type="text" id="vin" name="vin" placeholder="VIN" required>
                     </div>
                     <div class="form-group">
-                        <label for="marca_id">Marca ID:</label>
-                        <input type="text" id="marca_id" name="marca_id" placeholder="Marca ID" required>
+                        <label for="marca_id">Marca:</label>
+                        <select id="marca_id" name="marca_id" required onchange="fetchModelos(this.value, 'modelo_id')">
+                            <option value="" disabled selected>Seleccione una marca</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label for="modelo_id">Modelo ID:</label>
-                        <input type="text" id="modelo_id" name="modelo_id" placeholder="Modelo ID" required>
+                        <label for="modelo_id">Modelo:</label>
+                        <select id="modelo_id" name="modelo_id" required>
+                            <option value="" disabled selected>Seleccione un modelo</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="anio">Año:</label>
                         <input type="text" id="anio" name="anio" placeholder="Año" required>
                     </div>
                     <div class="form-group">
-                        <label for="color_id">Color ID:</label>
-                        <input type="text" id="color_id" name="color_id" placeholder="Color ID" required>
+                        <label for="color_id">Color:</label>
+                        <select id="color_id" name="color_id" required>
+                            <option value="" disabled selected>Seleccione un color</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label for="tipo_id">Tipo ID:</label>
-                        <input type="text" id="tipo_id" name="tipo_id" placeholder="Tipo ID" required>
+                        <label for="tipo_id">Tipo:</label>
+                        <select id="tipo_id" name="tipo_id" required>
+                            <option value="" disabled selected>Seleccione un tipo</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="linea">Línea:</label>
                         <input type="text" id="linea" name="linea" placeholder="Línea" required>
                     </div>
                     <div class="form-group">
-                        <label for="transmision_id">Transmisión ID:</label>
-                        <input type="text" id="transmision_id" name="transmision_id" placeholder="Transmisión ID" required>
+                        <label for="transmision_id">Transmisión:</label>
+                        <select id="transmision_id" name="transmision_id" required>
+                            <option value="" disabled selected>Seleccione una transmisión</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="precio">Precio:</label>
                         <input type="text" id="precio" name="precio" placeholder="Precio" required>
                     </div>
                     <div class="form-group">
-                        <label for="estado_v_id">Estado Vehículo ID:</label>
-                        <input type="text" id="estado_v_id" name="estado_v_id" placeholder="Estado Vehículo ID" required>
+                        <label for="estado_v_id">Estado Vehículo:</label>
+                        <select id="estado_v_id" name="estado_v_id" required>
+                            <option value="" disabled selected>Seleccione un estado</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="fecha_ingreso">Fecha Ingreso:</label>
@@ -199,8 +211,10 @@
                         <input type="text" id="num_motor" name="num_motor" placeholder="Número Motor" required>
                     </div>
                     <div class="form-group">
-                        <label for="tipo_motor_id">Tipo Motor ID:</label>
-                        <input type="text" id="tipo_motor_id" name="tipo_motor_id" placeholder="Tipo Motor ID" required>
+                        <label for="tipo_motor_id">Tipo Motor:</label>
+                        <select id="tipo_motor_id" name="tipo_motor_id" required>
+                            <option value="" disabled selected>Seleccione un tipo de motor</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="capacidad">Capacidad:</label>
@@ -215,8 +229,10 @@
                         <input type="text" id="num_puertas" name="num_puertas" placeholder="Número Puertas" required>
                     </div>
                     <div class="form-group">
-                        <label for="proveedor_id_fk">Proveedor ID:</label>
-                        <input type="text" id="proveedor_id_fk" name="proveedor_id_fk" placeholder="Proveedor ID" required>
+                        <label for="proveedor_id_fk">Proveedor:</label>
+                        <select id="proveedor_id_fk" name="proveedor_id_fk" required>
+                            <option value="" disabled selected>Seleccione un proveedor</option>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Agregar</button>
                 </form>
@@ -235,40 +251,52 @@
                         <input type="text" id="edit_vin" name="vin" placeholder="VIN" required>
                     </div>
                     <div class="form-group">
-                        <label for="edit_marca_id">Marca ID:</label>
-                        <input type="text" id="edit_marca_id" name="marca_id" placeholder="Marca ID" required>
+                        <label for="edit_marca_id">Marca:</label>
+                        <select id="edit_marca_id" name="marca_id" required onchange="fetchModelos(this.value, 'edit_modelo_id')">
+                            <option value="" disabled selected>Seleccione una marca</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label for="edit_modelo_id">Modelo ID:</label>
-                        <input type="text" id="edit_modelo_id" name="modelo_id" placeholder="Modelo ID" required>
+                        <label for="edit_modelo_id">Modelo:</label>
+                        <select id="edit_modelo_id" name="modelo_id" required>
+                            <option value="" disabled selected>Seleccione un modelo</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="edit_anio">Año:</label>
                         <input type="text" id="edit_anio" name="anio" placeholder="Año" required>
                     </div>
                     <div class="form-group">
-                        <label for="edit_color_id">Color ID:</label>
-                        <input type="text" id="edit_color_id" name="color_id" placeholder="Color ID" required>
+                        <label for="edit_color_id">Color:</label>
+                        <select id="edit_color_id" name="color_id" required>
+                            <option value="" disabled selected>Seleccione un color</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label for="edit_tipo_id">Tipo ID:</label>
-                        <input type="text" id="edit_tipo_id" name="tipo_id" placeholder="Tipo ID" required>
+                        <label for="edit_tipo_id">Tipo:</label>
+                        <select id="edit_tipo_id" name="tipo_id" required>
+                            <option value="" disabled selected>Seleccione un tipo</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="edit_linea">Línea:</label>
                         <input type="text" id="edit_linea" name="linea" placeholder="Línea" required>
                     </div>
                     <div class="form-group">
-                        <label for="edit_transmision_id">Transmisión ID:</label>
-                        <input type="text" id="edit_transmision_id" name="transmision_id" placeholder="Transmisión ID" required>
+                        <label for="edit_transmision_id">Transmisión:</label>
+                        <select id="edit_transmision_id" name="transmision_id" required>
+                            <option value="" disabled selected>Seleccione una transmisión</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="edit_precio">Precio:</label>
                         <input type="text" id="edit_precio" name="precio" placeholder="Precio" required>
                     </div>
                     <div class="form-group">
-                        <label for="edit_estado_v_id">Estado Vehículo ID:</label>
-                        <input type="text" id="edit_estado_v_id" name="estado_v_id" placeholder="Estado Vehículo ID" required>
+                        <label for="edit_estado_v_id">Estado Vehículo:</label>
+                        <select id="edit_estado_v_id" name="estado_v_id" required>
+                            <option value="" disabled selected>Seleccione un estado</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="edit_fecha_ingreso">Fecha Ingreso:</label>
@@ -279,8 +307,10 @@
                         <input type="text" id="edit_num_motor" name="num_motor" placeholder="Número Motor" required>
                     </div>
                     <div class="form-group">
-                        <label for="edit_tipo_motor_id">Tipo Motor ID:</label>
-                        <input type="text" id="edit_tipo_motor_id" name="tipo_motor_id" placeholder="Tipo Motor ID" required>
+                        <label for="edit_tipo_motor_id">Tipo Motor:</label>
+                        <select id="edit_tipo_motor_id" name="tipo_motor_id" required>
+                            <option value="" disabled selected>Seleccione un tipo de motor</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="edit_capacidad">Capacidad:</label>
@@ -295,8 +325,10 @@
                         <input type="text" id="edit_num_puertas" name="num_puertas" placeholder="Número Puertas" required>
                     </div>
                     <div class="form-group">
-                        <label for="edit_proveedor_id_fk">Proveedor ID:</label>
-                        <input type="text" id="edit_proveedor_id_fk" name="proveedor_id_fk" placeholder="Proveedor ID" required>
+                        <label for="edit_proveedor_id_fk">Proveedor:</label>
+                        <select id="edit_proveedor_id_fk" name="proveedor_id_fk" required>
+                            <option value="" disabled selected>Seleccione un proveedor</option>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Editar</button>
                 </form>
@@ -304,12 +336,56 @@
         </div>
     </div>
     <script>
+        async function fetchOptions(url, selectId, idField = 'ID') {
+            const response = await fetch(url);
+            const data = await response.json();
+            const select = document.getElementById(selectId);
+            select.innerHTML = ''; // Clear existing options
+            const placeholder = document.createElement('option');
+            placeholder.value = '';
+            placeholder.disabled = true;
+            placeholder.selected = true;
+            placeholder.text = 'Seleccione una opción';
+            select.appendChild(placeholder);
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item[idField] || item.ID_P;
+                option.text = item.MARCA || item.MODELO || item.COLOR || item.TIPO || item.ESTADO || item.EMPRESA;
+                select.appendChild(option);
+            });
+        }
+
+        async function fetchModelos(marcaId, selectId) {
+            const url = `/api/modelos/${marcaId}`;
+            await fetchOptions(url, selectId, 'ID');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchOptions('/api/marcas', 'marca_id');
+            fetchOptions('/api/coloresSelect', 'color_id', 'ID');
+            fetchOptions('/api/tipos', 'tipo_id');
+            fetchOptions('/api/transmisiones', 'transmision_id');
+            fetchOptions('/api/estados_vehiculo', 'estado_v_id');
+            fetchOptions('/api/tipos_motor', 'tipo_motor_id');
+            fetchOptions('/api/proveedores', 'proveedor_id_fk', 'ID_P');
+
+            fetchOptions('/api/marcas', 'edit_marca_id');
+            fetchOptions('/api/coloresSelect', 'edit_color_id', 'ID');
+            fetchOptions('/api/tipos', 'edit_tipo_id');
+            fetchOptions('/api/transmisiones', 'edit_transmision_id');
+            fetchOptions('/api/estados_vehiculo', 'edit_estado_v_id');
+            fetchOptions('/api/tipos_motor', 'edit_tipo_motor_id');
+            fetchOptions('/api/proveedores', 'edit_proveedor_id_fk', 'ID_P');
+        });
+
         function fillEditForm(id_v, vin, marca_id, modelo_id, anio, color_id, tipo_id, linea, transmision_id, precio, estado_v_id, fecha_ingreso, num_motor, tipo_motor_id, capacidad, num_cilindros, num_puertas, proveedor_id_fk) {
             document.getElementById('editForm').action = '/api/vehiculo/' + id_v + '/update';
             document.getElementById('edit_id_v').value = id_v;
             document.getElementById('edit_vin').value = vin;
             document.getElementById('edit_marca_id').value = marca_id;
-            document.getElementById('edit_modelo_id').value = modelo_id;
+            fetchModelos(marca_id, 'edit_modelo_id').then(() => {
+                document.getElementById('edit_modelo_id').value = modelo_id;
+            });
             document.getElementById('edit_anio').value = anio;
             document.getElementById('edit_color_id').value = color_id;
             document.getElementById('edit_tipo_id').value = tipo_id;

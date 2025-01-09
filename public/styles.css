@@ -219,6 +219,25 @@ body {
     color: #aaa;
 }
 
+select {
+    font-family: "Core Sans AR 55 Medium";
+    border: none;
+    border-bottom: 1px solid #333;
+    padding: 0.25rem;
+    outline: none;
+    font-size: 1rem;
+    background-color: transparent;
+    width: 60%;
+}
+
+select option {
+    color: #333;
+}
+
+select:invalid {
+    color: #aaa;
+}
+
 button {
     width: 100%;
     font-family: "Core Sans AR 55 Medium";
