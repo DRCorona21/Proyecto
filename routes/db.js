@@ -7,7 +7,7 @@ async function getConnection() {
         const connection = await oracledb.getConnection({
             user: 'autosadmin',
             password: 'Pix3lif',
-            connectString: 'localhost:1521/XEPDB1'
+            connectString: '127.0.0.1:1521/XEPDB1'
         });
         return connection;
     } catch (err) {
