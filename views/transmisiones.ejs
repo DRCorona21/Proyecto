@@ -29,7 +29,7 @@
                 <li class="menu-item"><i class="fa-solid fa-paint-roller"></i><span onclick="window.location.href='/api/colores'">Colores Vehiculares</span></li>
                 <li class="menu-item"><i class="fa-solid fa-caravan"></i><span onclick="window.location.href='/api/marca'">Marcas</span></li>
                 <li class="menu-item"><i class="fa-solid fa-car"></i><span onclick="window.location.href='/api/modelos'">Modelos</span></li>
-                <li class="menu-item"><i class="fa-duotone fa-solid fa-gear"></i><span onclick="window.location.href='/api/transmisionv2'">Tipos de transmisiones</span></li>
+                <li class="menu-item"><i class="fa-duotone fa-solid fa-gear"></i><span onclick="window.location.href='/api/transmisiones'">Transmisiones</span></li>
                 <li class="menu-item"><i class="fa-solid fa-award"></i><span onclick="window.location.href='/api/garantia'">Garantías</span></li>
                 <li class="menu-item"><i class="fa-solid fa-users"></i><span>Empleados</span></li>
                 <li class="menu-item"><i class="fa-solid fa-address-card"></i><span onclick="window.location.href='/api/contacto_empleado'">Contacto empleados</span></li>
@@ -65,18 +65,17 @@
                             <td>
                                 <%= row.TIPO %>
                             </td>
-
                             <td class="no-border" style="text-align: center;">
                                 <button class="table-button" onclick="fillEditForm('<%= row.ID %>', '<%= row.TIPO %>')"><i class="fa-solid fa-pen-to-square"></i></button>
                             </td>
                             <td class="no-border" style="text-align: center;">
-                                <form action="/api/transmisionv2/<%= row.ID %>/delete" method="POST" style="display:inline;">
+                                <form action="/api/transmisiones/<%= row.ID %>/delete" method="POST" style="display:inline;">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <button type="submit" class="table-button"><i class="fa-solid fa-trash"></i></button>
                                 </form>
                             </td>
                         </tr>
-                        <% }) %>
+                    <% }) %>
                 </tbody>
             </table>
         </div>
@@ -84,7 +83,7 @@
         <div class="form-container">
             <div class="card card-form">
                 <h2>Agregar Transmisión</h2>
-                <form action="/api/transmisionv2" method="POST">
+                <form action="/api/transmisiones" method="POST">
                     <div class="form-group">
                         <label for="id">ID:</label>
                         <input type="number" id="id" name="id" placeholder="ID" required>
@@ -99,7 +98,7 @@
 
             <div class="card card-form">
                 <h2>Editar Transmisión</h2>
-                <form id="editForm" action="/api/transmisionv2/%/update" method="POST">
+                <form id="editForm" action="/api/transmisiones/%/update" method="POST">
                     <input type="hidden" name="_method" value="PUT">
                     <div class="form-group">
                         <label for="edit_id">ID:</label>
@@ -116,7 +115,7 @@
     </div>
     <script>
         function fillEditForm(id, tipo) {
-            document.getElementById('editForm').action = '/api/transmisionv2/' + id + '/update';
+            document.getElementById('editForm').action = '/api/transmisiones/' + id + '/update';
             document.getElementById('edit_id').value = id;
             document.getElementById('edit_tipo').value = tipo;
         }
