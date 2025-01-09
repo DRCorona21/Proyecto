@@ -45,8 +45,8 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>ESTADO_ID</th>
-                        <th>ALC_MUN_ID</th>
+                        <th>ESTADO</th>
+                        <th>ALC_MUN</th>
                         <th>COLONIA</th>
                         <th>CP</th>
                         <th>CALLE</th>
@@ -63,10 +63,10 @@
                                 <%= row.ID %>
                             </td>
                             <td>
-                                <%= row.ESTADO_ID %>
+                                <%= row.ESTADO %>
                             </td>
                             <td>
-                                <%= row.ALC_MUN_ID %>
+                                <%= row.ALC_MUN %>
                             </td>
                             <td>
                                 <%= row.COLONIA %>
@@ -84,7 +84,7 @@
                                 <%= row.NO_EXT %>
                             </td>
                             <td class="no-border" style="text-align: center;">
-                                <button class="table-button" onclick="fillEditForm('<%= row.ID %>', '<%= row.ESTADO_ID %>', '<%= row.ALC_MUN_ID %>', '<%= row.COLONIA %>', '<%= row.CP %>', '<%= row.CALLE %>', '<%= row.NO_INT %>', '<%= row.NO_EXT %>')"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="table-button" onclick="fetchAndFillEditForm('<%= row.ID %>')"><i class="fa-solid fa-pen-to-square"></i></button>
                             </td>
                             <td class="no-border" style="text-align: center;">
                                 <form action="/api/direccion/<%= row.ID %>/delete" method="POST" style="display:inline;">
@@ -180,16 +180,21 @@
         </div>
     </div>
     <script>
-        function fillEditForm(id, estado_id, alc_mun_id, colonia, cp, calle, no_int, no_ext) {
-            document.getElementById('editForm').action = '/api/direccion/' + id + '/update';
-            document.getElementById('edit_direccion_id').value = id;
-            document.getElementById('edit_estado_id').value = estado_id;
-            document.getElementById('edit_alc_mun_id').value = alc_mun_id;
-            document.getElementById('edit_colonia').value = colonia;
-            document.getElementById('edit_cp').value = cp;
-            document.getElementById('edit_calle').value = calle;
-            document.getElementById('edit_no_int').value = no_int;
-            document.getElementById('edit_no_ext').value = no_ext;
+        function fetchAndFillEditForm(id) {
+            fetch(`/api/direccion/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('editForm').action = '/api/direccion/' + data.ID + '/update';
+                    document.getElementById('edit_direccion_id').value = data.ID;
+                    document.getElementById('edit_estado_id').value = data.ESTADO_ID;
+                    document.getElementById('edit_alc_mun_id').value = data.ALC_MUN_ID;
+                    document.getElementById('edit_colonia').value = data.COLONIA;
+                    document.getElementById('edit_cp').value = data.CP;
+                    document.getElementById('edit_calle').value = data.CALLE;
+                    document.getElementById('edit_no_int').value = data.NO_INT;
+                    document.getElementById('edit_no_ext').value = data.NO_EXT;
+                })
+                .catch(error => console.error('Error al obtener los datos:', error));
         }
     </script>
 </body>
