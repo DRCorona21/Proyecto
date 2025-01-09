@@ -2,6 +2,14 @@ const express = require('express');
 const { getConnection, closeConnection } = require('./db');
 const router = express.Router();
 
+// Middleware to handle error messages
+router.use((req, res, next) => {
+    res.locals.showAlert = function(message) {
+        return `<script>alert('${message}'); window.history.back();</script>`;
+    };
+    next();
+});
+
 // Insertar una nueva dirección
 router.post('/direccion', async(req, res) => {
     let connection;
@@ -16,7 +24,7 @@ router.post('/direccion', async(req, res) => {
         );
 
         if (checkResult.rows[0].COUNT > 0) {
-            res.status(400).send('Error: El ID ya existe en la base de datos.');
+            res.send(res.locals.showAlert('Error: El ID ya existe en la base de datos.'));
             return;
         }
 
@@ -95,6 +103,16 @@ router.post('/vehiculo', async(req, res) => {
 
         const { id_v, vin, marca_id, modelo_id, anio, color_id, tipo_id, linea, transmision_id, precio, estado_v_id, fecha_ingreso, num_motor, tipo_motor_id, capacidad, num_cilindros, num_puertas, proveedor_id_fk } = req.body;
 
+        // Verificar si el ID ya existe
+        const checkResult = await connection.execute(
+            `SELECT COUNT(*) AS COUNT FROM VEHICULO WHERE ID_V = :id_v`, { id_v }
+        );
+
+        if (checkResult.rows[0].COUNT > 0) {
+            res.send(res.locals.showAlert('Error: El ID ya existe en la base de datos.'));
+            return;
+        }
+
         await connection.execute(
             `INSERT INTO VEHICULO (ID_V, VIN, MARCA_ID, MODELO_ID, ANIO, COLOR_ID, TIPO_ID, LINEA, TRANSMISION_ID, PRECIO, ESTADO_V_ID, FECHA_INGRESO, NUM_MOTOR, TIPO_MOTOR_ID, CAPACIDAD, NUM_CILINDROS, NUM_PUERTAS, PROVEEDOR_ID_FK) 
             VALUES (:id_v, :vin, :marca_id, :modelo_id, :anio, :color_id, :tipo_id, :linea, :transmision_id, :precio, :estado_v_id, TO_DATE(:fecha_ingreso, 'YYYY-MM-DD'), :num_motor, :tipo_motor_id, :capacidad, :num_cilindros, :num_puertas, :proveedor_id_fk)`, { id_v, vin, marca_id, modelo_id, anio, color_id, tipo_id, linea, transmision_id, precio, estado_v_id, fecha_ingreso, num_motor, tipo_motor_id, capacidad, num_cilindros, num_puertas, proveedor_id_fk }, { autoCommit: true }
@@ -168,12 +186,12 @@ router.post('/colores', async(req, res) => {
         );
 
         if (checkResult.rows[0].COUNT > 0) {
-            res.status(400).send('Error: El ID ya existe en la base de datos.');
+            res.send(res.locals.showAlert('Error: El ID ya existe en la base de datos.'));
             return;
         }
 
         await connection.execute(
-            `INSERT INTO COLOR (ID, COLOR) VALUES (:ID, :COLOR)`, { ID, COLOR}, { autoCommit: true }
+            `INSERT INTO COLOR (ID, COLOR) VALUES (:ID, :COLOR)`, { ID, COLOR }, { autoCommit: true }
         );
 
         res.redirect('/api/colores');
@@ -226,7 +244,7 @@ router.post('/colores/:id/update', async(req, res) => {
         }
 
         await connection.execute(
-            `UPDATE COLOR SET COLOR = :color WHERE ID = :ID`, { color, ID}, { autoCommit: true }
+            `UPDATE COLOR SET COLOR = :color WHERE ID = :ID`, { color, ID }, { autoCommit: true }
         );
 
         res.redirect('/api/colores');
