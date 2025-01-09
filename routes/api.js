@@ -102,4 +102,93 @@ router.get('/modelos', async(req, res) => {
     }
 });
 
+//Obtener metodos metodicos 
+router.get('/metodos', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const result = await connection.execute(`
+            SELECT * FROM METODO_PAGO
+        `);
+        res.render('metodos', { data: result.rows }); //nombre ejs
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+//Obtener marcas
+router.get('/marca', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const result = await connection.execute(`
+            SELECT * FROM MARCA
+        `);
+        res.render('marca', { data: result.rows }); //nombre ejs
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+//Obtener garantias
+router.get('/garantia', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const result = await connection.execute(`
+            SELECT * FROM TIPO_GARANTIA
+        `);
+        res.render('garantia', { data: result.rows }); //nombre ejs
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+//Obtener cargos
+router.get('/cargos', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const result = await connection.execute(`
+            SELECT * FROM CARGO_EMPLEADO
+        `);
+        res.render('cargos', { data: result.rows }); //nombre ejs
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+//Obtener contaco empleados
+router.get('/contacto_empleado', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const result = await connection.execute(`
+            SELECT * FROM CONTACTO_EMPLEADO
+        `);
+        res.render('contacto_empleado', { data: result.rows }); //nombre ejs
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
 module.exports = router;

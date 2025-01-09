@@ -335,4 +335,400 @@ router.post('/modelos/:id/update', async(req, res) => {
     }
 });
 
+// Insertar un nuevo método de pago
+router.post('/metodos', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { id, metodo } = req.body;
+
+        // Verificar si el ID ya existe
+        const checkResult = await connection.execute(
+            `SELECT COUNT(*) AS COUNT FROM METODO_PAGO WHERE ID = :id`, { id }
+        );
+
+        if (checkResult.rows[0].COUNT > 0) {
+            res.send(res.locals.showAlert('Error: El ID ya existe en la base de datos.'));
+            return;
+        }
+
+        await connection.execute(
+            `INSERT INTO METODO_PAGO (ID, METODO) VALUES (:id, :metodo)`, { id, metodo }, { autoCommit: true }
+        );
+
+        res.redirect('/api/metodos');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al insertar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Eliminar un método de pago
+router.post('/metodos/:id/delete', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const id = req.params.id;
+
+        await connection.execute(
+            `DELETE FROM METODO_PAGO WHERE ID = :id`, { id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/metodos');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al eliminar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Actualizar un método de pago
+router.post('/metodos/:id/update', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { metodo } = req.body;
+        const id = req.params.id;
+
+        if (!metodo) {
+            res.status(400).send('Error: Todos los campos requeridos deben tener valores.');
+            return;
+        }
+
+        await connection.execute(
+            `UPDATE METODO_PAGO SET METODO = :metodo WHERE ID = :id`, { metodo, id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/metodos');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al actualizar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+
+// Insertar una nueva marca
+router.post('/marca', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { id, marca } = req.body;
+
+        // Verificar si el ID ya existe
+        const checkResult = await connection.execute(
+            `SELECT COUNT(*) AS COUNT FROM MARCA WHERE ID = :id`, { id }
+        );
+
+        if (checkResult.rows[0].COUNT > 0) {
+            res.send(res.locals.showAlert('Error: El ID ya existe en la base de datos.'));
+            return;
+        }
+
+        await connection.execute(
+            `INSERT INTO MARCA (ID, MARCA) VALUES (:id, :marca)`, { id, marca }, { autoCommit: true }
+        );
+
+        res.redirect('/api/marca');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al insertar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Eliminar una marca
+router.post('/marca/:id/delete', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const id = req.params.id;
+
+        await connection.execute(
+            `DELETE FROM MARCA WHERE ID = :id`, { id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/marca');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al eliminar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Actualizar una marca
+router.post('/marca/:id/update', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { marca } = req.body;
+        const id = req.params.id;
+
+        if (!marca) {
+            res.status(400).send('Error: Todos los campos requeridos deben tener valores.');
+            return;
+        }
+
+        await connection.execute(
+            `UPDATE MARCA SET MARCA = :marca WHERE ID = :id`, { marca, id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/marca');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al actualizar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Insertar una nueva garantía
+router.post('/garantia', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { id, garantia } = req.body;
+
+        // Verificar si el ID ya existe
+        const checkResult = await connection.execute(
+            `SELECT COUNT(*) AS COUNT FROM TIPO_GARANTIA WHERE ID = :id`, { id }
+        );
+
+        if (checkResult.rows[0].COUNT > 0) {
+            res.send(res.locals.showAlert('Error: El ID ya existe en la base de datos.'));
+            return;
+        }
+
+        await connection.execute(
+            `INSERT INTO TIPO_GARANTIA (ID, GARANTIA) VALUES (:id, :garantia)`, { id, garantia }, { autoCommit: true }
+        );
+
+        res.redirect('/api/garantia');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al insertar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Eliminar una garantía
+router.post('/garantia/:id/delete', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const id = req.params.id;
+
+        await connection.execute(
+            `DELETE FROM TIPO_GARANTIA WHERE ID = :id`, { id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/garantia');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al eliminar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Actualizar una garantía
+router.post('/garantia/:id/update', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { garantia } = req.body;
+        const id = req.params.id;
+
+        if (!garantia) {
+            res.status(400).send('Error: Todos los campos requeridos deben tener valores.');
+            return;
+        }
+
+        await connection.execute(
+            `UPDATE TIPO_GARANTIA SET GARANTIA = :garantia WHERE ID = :id`, { garantia, id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/garantia');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al actualizar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Insertar un nuevo cargo
+router.post('/cargos', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { id, cargo } = req.body;
+
+        // Verificar si el ID ya existe
+        const checkResult = await connection.execute(
+            `SELECT COUNT(*) AS COUNT FROM CARGO_EMPLEADO WHERE ID = :id`, { id }
+        );
+
+        if (checkResult.rows[0].COUNT > 0) {
+            res.send(res.locals.showAlert('Error: El ID ya existe en la base de datos.'));
+            return;
+        }
+
+        await connection.execute(
+            `INSERT INTO CARGO_EMPLEADO (ID, CARGO) VALUES (:id, :cargo)`, { id, cargo }, { autoCommit: true }
+        );
+
+        res.redirect('/api/cargos');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al insertar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Eliminar un cargo
+router.post('/cargos/:id/delete', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const id = req.params.id;
+
+        await connection.execute(
+            `DELETE FROM CARGO_EMPLEADO WHERE ID = :id`, { id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/cargos');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al eliminar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Actualizar un cargo
+router.post('/cargos/:id/update', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { cargo } = req.body;
+        const id = req.params.id;
+
+        if (!cargo) {
+            res.status(400).send('Error: Todos los campos requeridos deben tener valores.');
+            return;
+        }
+
+        await connection.execute(
+            `UPDATE CARGO_EMPLEADO SET CARGO = :cargo WHERE ID = :id`, { cargo, id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/cargos');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al actualizar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Insertar un nuevo contacto
+router.post('/contacto_empleado', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { id, correo, telefono } = req.body;
+
+        // Verificar si el ID ya existe
+        const checkResult = await connection.execute(
+            `SELECT COUNT(*) AS COUNT FROM CONTACTO_EMPLEADO WHERE ID = :id`, { id }
+        );
+
+        if (checkResult.rows[0].COUNT > 0) {
+            res.send(res.locals.showAlert('Error: El ID ya existe en la base de datos.'));
+            return;
+        }
+
+        await connection.execute(
+            `INSERT INTO CONTACTO_EMPLEADO (ID, CORREO, TELEFONO) VALUES (:id, :correo, :telefono)`, { id, correo, telefono }, { autoCommit: true }
+        );
+
+        res.redirect('/api/contacto_empleado');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al insertar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Eliminar un contacto
+router.post('/contacto_empleado/:id/delete', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const id = req.params.id;
+
+        await connection.execute(
+            `DELETE FROM CONTACTO_EMPLEADO WHERE ID = :id`, { id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/contacto_empleado');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al eliminar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
+// Actualizar un contacto
+router.post('/contacto_empleado/:id/update', async(req, res) => {
+    let connection;
+    try {
+        connection = await getConnection();
+
+        const { correo, telefono } = req.body;
+        const id = req.params.id;
+
+        if (!correo || !telefono) {
+            res.status(400).send('Error: Todos los campos requeridos deben tener valores.');
+            return;
+        }
+
+        await connection.execute(
+            `UPDATE CONTACTO_EMPLEADO SET CORREO = :correo, TELEFONO = :telefono WHERE ID = :id`, { correo, telefono, id }, { autoCommit: true }
+        );
+
+        res.redirect('/api/contacto_empleado');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al actualizar los datos');
+    } finally {
+        await closeConnection(connection);
+    }
+});
+
 module.exports = router;
