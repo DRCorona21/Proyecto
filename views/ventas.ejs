@@ -50,7 +50,7 @@
             <table border="1">
                 <thead>
                     <tr>
-                        <th>CLAVE VENTA</th>
+                        <th style="display: none;">CLAVE VENTA</th>
                         <th>VIN</th>
                         <th>MARCA</th>
                         <th>MODELO</th>
@@ -78,14 +78,13 @@
                         <th>RFC</th>
                         <th>GARANTIA</th>
                         <th>METODO PAGO</th>
-                        <th class="no-border"></th>
-                        <th class="no-border"></th>
+                        
                     </tr>
                 </thead>
                 <tbody>
                     <% data.forEach(row => { %>
                         <tr>
-                            <td>
+                            <td style="display: none;">
                                 <%= row.CLAVE %>
                             </td>
                             <td>
