@@ -50,7 +50,7 @@
             <table border="1">
                 <thead>
                     <tr>
-                        <th style="display: none;">ID_V</th>
+                        <th>ID_V</th>
                         <th>VIN</th>
                         <th>MARCA</th>
                         <th>MODELO</th>
@@ -75,7 +75,7 @@
                 <tbody>
                     <% data.forEach(row => { %>
                         <tr>
-                            <td style="display: none;">
+                            <td>
                                 <%= row.ID_V %>
                             </td>
                             <td>
@@ -148,7 +148,7 @@
             <div class="card card-form">
                 <h2>Agregar Vehículo</h2>
                 <form action="/api/vehiculo" method="POST">
-                    <div class="form-group" style="display: none;">
+                    <div class="form-group">
                         <label for="id_v">ID_V:</label>
                         <input type="text" id="id_v" name="id_v" placeholder="ID_V" required>
                     </div>
@@ -244,9 +244,9 @@
                 <h2>Editar Vehículo</h2>
                 <form id="editForm" action="/api/vehiculo/update" method="POST">
                     <input type="hidden" name="_method" value="PUT">
-                    <div class="form-group" style="display: none;">
+                    <div class="form-group">
                         <label for="edit_id_v">ID_V:</label>
-                        <input type="text" id="edit_id_v" name="id_v" placeholder="ID_V" required>
+                        <input type="text" id="edit_id_v" name="id_v" placeholder="ID_V" readonly>
                     </div>
                     <div class="form-group">
                         <label for="edit_vin">VIN:</label>
@@ -362,23 +362,7 @@
             await fetchOptions(url, selectId, 'ID');
         }
 
-        async function fetchMaxId() {
-            const response = await fetch('/api/modelos/maxId');
-            const data = await response.json();
-            const maxId = data.MAX_ID + 1;
-            document.getElementById('id_v').value = maxId;
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
-            const rows = document.querySelectorAll('tbody tr');
-            let maxId = 0;
-            rows.forEach(row => {
-                const id = parseInt(row.cells[0].innerText);
-                if (id > maxId) {
-                    maxId = id;
-                }
-            });
-            document.getElementById('id_v').value = maxId + 1;
             fetchOptions('/api/marcas', 'marca_id');
             fetchOptions('/api/coloresSelect', 'color_id', 'ID');
             fetchOptions('/api/tipos', 'tipo_id');

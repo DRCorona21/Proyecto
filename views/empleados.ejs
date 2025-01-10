@@ -147,7 +147,7 @@
             <div class="card card-form">
                 <h2>Agregar Empleado</h2>
                 <form action="/api/empleado" method="POST">
-                    <div class="form-group" style="display: none;">
+                    <div class="form-group">
                         <label for="id_e">ID:</label>
                         <input type="text" id="id_e" name="id_e" placeholder="ID" required>
                     </div>
@@ -203,7 +203,7 @@
                 <h2>Editar Empleado</h2>
                 <form id="editForm" action="/api/empleado/update" method="POST">
                     <input type="hidden" name="_method" value="PUT">
-                    <div class="form-group" style="display: none;">
+                    <div class="form-group">
                         <label for="edit_id_e">ID:</label>
                         <input type="text" id="edit_id_e" name="id_e" placeholder="ID" required>
                     </div>
@@ -297,16 +297,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const rows = document.querySelectorAll('tbody tr');
-            let maxId = 0;
-            rows.forEach(row => {
-                const id = parseInt(row.cells[0].innerText);
-                if (id > maxId) {
-                    maxId = id;
-                }
-            });
-            document.getElementById('id_e').value = maxId + 1;
-
             populateSelect('/api/tofillemp/cargos', 'cargo_empleado_id', 'CARGO');
             populateSelect('/api/tofillemp/cargos', 'edit_cargo_empleado_id', 'CARGO');
             populateSelect('/api/tofillemp/contacto_empleado', 'contacto_empleado_id', 'CORREO');
