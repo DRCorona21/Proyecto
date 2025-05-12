@@ -3,19 +3,19 @@ const { getConnection, closeConnection } = require('./db');
 const router = express.Router();
 
 // Obtener todas las direcciones
-router.get('/direccion', async(req, res) => {
+router.get('/direccion', async (req, res) => {
     let connection;
     try {
         connection = await getConnection();
 
-        const result = await connection.execute(`
+        const [rows] = await connection.query(`
             SELECT DIRECCION.ID, ESTADO, ALC_MUN, COLONIA, CP, CALLE, NO_INT, NO_EXT
             FROM DIRECCION
             JOIN ESTADO ON DIRECCION.ESTADO_ID = ESTADO.ID
             JOIN ALC_MUN ON DIRECCION.ALC_MUN_ID = ALC_MUN.ID
             ORDER BY DIRECCION.ID ASC
         `);
-        res.render('direccion', { data: result.rows });
+        res.render('direccion', { data: rows });
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -25,20 +25,20 @@ router.get('/direccion', async(req, res) => {
 });
 
 // Obtener una dirección por ID
-router.get('/direccion/:id', async(req, res) => {
+router.get('/direccion/:id', async (req, res) => {
     let connection;
     try {
         connection = await getConnection();
 
         const direccion_id = req.params.id;
-        const result = await connection.execute(`
+        const [rows] = await connection.query(`
             SELECT DIRECCION.ID, DIRECCION.ESTADO_ID, DIRECCION.ALC_MUN_ID, COLONIA, CP, CALLE, NO_INT, NO_EXT
             FROM DIRECCION
-            WHERE DIRECCION.ID = :direccion_id
-        `, { direccion_id });
+            WHERE DIRECCION.ID = ?
+        `, [direccion_id]);
 
-        if (result.rows.length > 0) {
-            res.json(result.rows[0]);
+        if (rows.length > 0) {
+            res.json(rows[0]);
         } else {
             res.status(404).send('Dirección no encontrada');
         }
@@ -51,12 +51,12 @@ router.get('/direccion/:id', async(req, res) => {
 });
 
 // Obtener todos los vehículos
-router.get('/vehiculo', async(req, res) => {
+router.get('/vehiculo', async (req, res) => {
     let connection;
     try {
         connection = await getConnection();
 
-        const result = await connection.execute(`
+        const [rows] = await connection.query(`
             SELECT 
                 VEHICULO.ID_V,
                 VEHICULO.VIN,
@@ -87,7 +87,7 @@ router.get('/vehiculo', async(req, res) => {
             JOIN PROVEEDOR ON VEHICULO.PROVEEDOR_ID_FK = PROVEEDOR.ID_P
             ORDER BY VEHICULO.ID_V ASC
         `);
-        res.render('vehiculos', { data: result.rows });
+        res.render('vehiculos', { data: rows });
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -102,8 +102,8 @@ router.get('/colores', async(req, res) => {
     try {
         connection = await getConnection();
 
-        const result = await connection.execute(`SELECT * FROM COLOR ORDER BY ID ASC`);
-        res.render('colores', { data: result.rows }); //nombre ejs
+        const [rows] = await connection.query(`SELECT * FROM COLOR ORDER BY ID ASC`);
+        res.render('colores', { data: rows }); //nombre ejs
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -118,13 +118,13 @@ router.get('/modelos', async(req, res) => {
     try {
         connection = await getConnection();
 
-        const result = await connection.execute(`
+        const [rows] = await connection.query(`
             SELECT MODELO.ID, MODELO.MODELO, MARCA.MARCA, MODELO.MARCA_ID
             FROM MODELO 
             JOIN MARCA ON MODELO.MARCA_ID = MARCA.ID
             ORDER BY MODELO.ID ASC
         `);
-        res.render('modelos', { data: result.rows }); //nombre ejs
+        res.render('modelos', { data: rows }); //nombre ejs
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -139,8 +139,8 @@ router.get('/modelos/:marca_id', async(req, res) => {
     try {
         connection = await getConnection();
         const marca_id = req.params.marca_id;
-        const result = await connection.execute(`SELECT ID, MODELO FROM MODELO WHERE MARCA_ID = :marca_id ORDER BY ID ASC`, { marca_id });
-        res.json(result.rows);
+        const [rows] = await connection.query(`SELECT ID, MODELO FROM MODELO WHERE MARCA_ID = ? ORDER BY ID ASC`, [marca_id]);
+        res.json(rows);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -154,8 +154,8 @@ router.get('/colores', async(req, res) => {
     let connection;
     try {
         connection = await getConnection();
-        const result = await connection.execute(`SELECT ID, COLOR FROM COLOR ORDER BY ID ASC`);
-        res.json(result.rows);
+        const [rows] = await connection.query(`SELECT ID, COLOR FROM COLOR ORDER BY ID ASC`);
+        res.json(rows);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -169,8 +169,8 @@ router.get('/coloresSelect', async(req, res) => {
     let connection;
     try {
         connection = await getConnection();
-        const result = await connection.execute(`SELECT ID, COLOR FROM COLOR ORDER BY ID ASC`);
-        res.json(result.rows);
+        const [rows] = await connection.query(`SELECT ID, COLOR FROM COLOR ORDER BY ID ASC`);
+        res.json(rows);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -185,10 +185,10 @@ router.get('/metodos', async(req, res) => {
     try {
         connection = await getConnection();
 
-        const result = await connection.execute(`
+        const [rows] = await connection.query(`
             SELECT * FROM METODO_PAGO ORDER BY ID ASC
         `);
-        res.render('metodos', { data: result.rows }); //nombre ejs
+        res.render('metodos', { data: rows }); //nombre ejs
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -203,10 +203,10 @@ router.get('/marca', async(req, res) => {
     try {
         connection = await getConnection();
 
-        const result = await connection.execute(`
+        const [rows] = await connection.query(`
             SELECT * FROM MARCA ORDER BY ID ASC
         `);
-        res.render('marca', { data: result.rows }); //nombre ejs
+        res.render('marca', { data: rows }); //nombre ejs
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -220,8 +220,8 @@ router.get('/marcasSelect', async(req, res) => {
     let connection;
     try {
         connection = await getConnection();
-        const result = await connection.execute(`SELECT ID, MARCA FROM MARCA ORDER BY ID ASC`);
-        res.json(result.rows);
+        const [rows] = await connection.query(`SELECT ID, MARCA FROM MARCA ORDER BY ID ASC`);
+        res.json(rows);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -236,10 +236,10 @@ router.get('/garantia', async(req, res) => {
     try {
         connection = await getConnection();
 
-        const result = await connection.execute(`
+        const [rows] = await connection.query(`
             SELECT * FROM TIPO_GARANTIA ORDER BY ID ASC
         `);
-        res.render('garantia', { data: result.rows }); //nombre ejs
+        res.render('garantia', { data: rows }); //nombre ejs
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -254,10 +254,10 @@ router.get('/cargos', async(req, res) => {
     try {
         connection = await getConnection();
 
-        const result = await connection.execute(`
+        const [rows] = await connection.query(`
             SELECT * FROM CARGO_EMPLEADO ORDER BY ID ASC
         `);
-        res.render('cargos', { data: result.rows }); //nombre ejs
+        res.render('cargos', { data: rows }); //nombre ejs
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -272,10 +272,10 @@ router.get('/contacto_empleado', async(req, res) => {
     try {
         connection = await getConnection();
 
-        const result = await connection.execute(`
+        const [rows] = await connection.query(`
             SELECT * FROM CONTACTO_EMPLEADO ORDER BY ID ASC
         `);
-        res.render('contacto_empleado', { data: result.rows }); //nombre ejs
+        res.render('contacto_empleado', { data: rows }); //nombre ejs
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -290,10 +290,10 @@ router.get('/transmisionv2', async(req, res) => {
     try {
         connection = await getConnection();
 
-        const result = await connection.execute(`
+        const [rows] = await connection.query(`
             SELECT * FROM TRANSMISION ORDER BY ID ASC
         `);
-        res.render('transmisionv2', { data: result.rows }); //nombre ejs
+        res.render('transmisionv2', { data: rows }); //nombre ejs
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -308,10 +308,10 @@ router.get('/motores', async(req, res) => {
     try {
         connection = await getConnection();
 
-        const result = await connection.execute(`
+        const [rows] = await connection.query(`
             SELECT * FROM TIPO_MOTOR ORDER BY ID ASC
         `);
-        res.render('motores', { data: result.rows }); //nombre ejs
+        res.render('motores', { data: rows }); //nombre ejs
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -326,8 +326,8 @@ router.get('/estados', async(req, res) => {
     try {
         connection = await getConnection();
 
-        const result = await connection.execute(`SELECT ID, ESTADO FROM ESTADO ORDER BY ID ASC`);
-        res.json(result.rows);
+        const [rows] = await connection.query(`SELECT ID, ESTADO FROM ESTADO ORDER BY ID ASC`);
+        res.json(rows);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -342,8 +342,8 @@ router.get('/municipios', async(req, res) => {
     try {
         connection = await getConnection();
 
-        const result = await connection.execute(`SELECT ID, ALC_MUN FROM ALC_MUN ORDER BY ID ASC`);
-        res.json(result.rows);
+        const [rows] = await connection.query(`SELECT ID, ALC_MUN FROM ALC_MUN ORDER BY ID ASC`);
+        res.json(rows);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -357,8 +357,8 @@ router.get('/marcas', async(req, res) => {
     let connection;
     try {
         connection = await getConnection();
-        const result = await connection.execute(`SELECT ID, MARCA FROM MARCA ORDER BY ID ASC`);
-        res.json(result.rows);
+        const [rows] = await connection.query(`SELECT ID, MARCA FROM MARCA ORDER BY ID ASC`);
+        res.json(rows);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -372,8 +372,8 @@ router.get('/tipos', async(req, res) => {
     let connection;
     try {
         connection = await getConnection();
-        const result = await connection.execute(`SELECT ID, TIPO FROM TIPO ORDER BY ID ASC`);
-        res.json(result.rows);
+        const [rows] = await connection.query(`SELECT ID, TIPO FROM TIPO ORDER BY ID ASC`);
+        res.json(rows);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -387,8 +387,8 @@ router.get('/transmisiones', async(req, res) => {
     let connection;
     try {
         connection = await getConnection();
-        const result = await connection.execute(`SELECT ID, TIPO FROM TRANSMISION ORDER BY ID ASC`);
-        res.json(result.rows);
+        const [rows] = await connection.query(`SELECT ID, TIPO FROM TRANSMISION ORDER BY ID ASC`);
+        res.json(rows);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -403,8 +403,8 @@ router.get('/estados_vehiculo', async(req, res) => {
     let connection;
     try {
         connection = await getConnection();
-        const result = await connection.execute(`SELECT ID, ESTADO FROM ESTADO_V ORDER BY ID ASC`);
-        res.json(result.rows);
+        const [rows] = await connection.query(`SELECT ID, ESTADO FROM ESTADO_V ORDER BY ID ASC`);
+        res.json(rows);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -418,8 +418,8 @@ router.get('/tipos_motor', async(req, res) => {
     let connection;
     try {
         connection = await getConnection();
-        const result = await connection.execute(`SELECT ID, TIPO FROM TIPO_MOTOR ORDER BY ID ASC`);
-        res.json(result.rows);
+        const [rows] = await connection.query(`SELECT ID, TIPO FROM TIPO_MOTOR ORDER BY ID ASC`);
+        res.json(rows);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -433,8 +433,8 @@ router.get('/proveedores', async(req, res) => {
     let connection;
     try {
         connection = await getConnection();
-        const result = await connection.execute(`SELECT ID_P, EMPRESA FROM PROVEEDOR ORDER BY ID_P ASC`);
-        res.json(result.rows);
+        const [rows] = await connection.query(`SELECT ID_P, EMPRESA FROM PROVEEDOR ORDER BY ID_P ASC`);
+        res.json(rows);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -448,10 +448,10 @@ router.get('/modelos/maxId', async(req, res) => {
     let connection;
     try {
         connection = await getConnection();
-        const result = await connection.execute(`SELECT MAX(ID) AS MAX_ID FROM MODELO`);
-        const maxId = result.rows[0].MAX_ID;
+        const [rows] = await connection.query(`SELECT MAX(ID) AS MAX_ID FROM MODELO`);
+        const maxId = rows[0].MAX_ID;
         console.log('ID máximo obtenido:', maxId, 'Tipo:', typeof maxId);
-        res.json(result.rows[0]);
+        res.json(rows[0]);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener el ID máximo');
@@ -466,7 +466,7 @@ router.get('/ventas', async(req, res) => {
     try {
         connection = await getConnection();
 
-        const result = await connection.execute(`
+        const [rows] = await connection.query(`
             SELECT VENTA.CLAVE, VEHICULO.VIN, MARCA.MARCA, MODELO.MODELO, VEHICULO.ANIO, COLOR.COLOR, TIPO.TIPO, VEHICULO.LINEA, TRANSMISION.TIPO AS TRANSMISION, VEHICULO.PRECIO,
             ESTADO_V.ESTADO, VEHICULO.FECHA_INGRESO, VEHICULO.NUM_MOTOR, TIPO_MOTOR.TIPO AS TIPO_MOTOR, VEHICULO.CAPACIDAD, VEHICULO.NUM_CILINDROS, VEHICULO.NUM_PUERTAS,
             PROVEEDOR.EMPRESA AS PROVEEDOR, VENTA.FECHA_VENTA, VENTA.FECHA_ENTREGA, VENTA.NO_FACTURA, CLIENTE.NOMBRE AS NOMBRE_CLIENTE, EMPLEADO.NOMBRE AS NOMBRE_EMPLEADO, 
@@ -490,7 +490,7 @@ router.get('/ventas', async(req, res) => {
             JOIN METODO_PAGO ON DETALLE_PAGO.METODO_PAGO_ID = METODO_PAGO.ID
             ORDER BY VENTA.CLAVE ASC
         `);
-        res.render('ventas', { data: result.rows });
+        res.render('ventas', { data: rows });
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -505,7 +505,7 @@ router.get('/empleado', async(req, res) => {
     try {
         connection = await getConnection();
 
-        const result = await connection.execute(`
+        const [rows] = await connection.query(`
             SELECT EMPLEADO.ID_E, DIRECCION.ID, CONCESIONARIA.CLAVE, EMPLEADO.NOMBRE, EMPLEADO.APELLIDO_PAT, EMPLEADO.APELLIDO_MAT, EMPLEADO.RFC, EMPLEADO.FECHA_NACI,
             CARGO_EMPLEADO.CARGO, CONCESIONARIA.NOMBRE AS CONCESIONARIA_NOMBRE,
             CONTACTO_EMPLEADO.CORREO, CONTACTO_EMPLEADO.TELEFONO, ESTADO.ESTADO,
@@ -519,7 +519,7 @@ router.get('/empleado', async(req, res) => {
             JOIN CONCESIONARIA ON EMPLEADO.CONCESIONARIA_CLAVE = CONCESIONARIA.CLAVE
             ORDER BY EMPLEADO.ID_E ASC
         `);
-        res.render('empleados', { data: result.rows });
+        res.render('empleados', { data: rows });
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -535,7 +535,7 @@ router.get('/empleado/:id', async(req, res) => {
         connection = await getConnection();
 
         const id_e = req.params.id;
-        const result = await connection.execute(`
+        const [rows] = await connection.query(`
             SELECT EMPLEADO.ID_E, DIRECCION.ID, EMPLEADO.APELLIDO_PAT, EMPLEADO.APELLIDO_MAT, EMPLEADO.RFC, EMPLEADO.FECHA_NACI,
             CARGO_EMPLEADO.CARGO, CONTACTO_EMPLEADO.CORREO, CONTACTO_EMPLEADO.TELEFONO, ESTADO.ESTADO,
             ALC_MUN.ALC_MUN, DIRECCION.CP, DIRECCION.CALLE, DIRECCION.NO_INT, DIRECCION.NO_EXT 
@@ -545,11 +545,11 @@ router.get('/empleado/:id', async(req, res) => {
             JOIN ALC_MUN ON DIRECCION.ALC_MUN_ID = ALC_MUN.ID
             JOIN CONTACTO_EMPLEADO ON EMPLEADO.CONTACTO_EMPLEADO_ID = CONTACTO_EMPLEADO.ID
             JOIN CARGO_EMPLEADO ON EMPLEADO.CARGO_EMPLEADO_ID = CARGO_EMPLEADO.ID
-            WHERE EMPLEADO.ID_E = :id_e
-        `, { id_e });
+            WHERE EMPLEADO.ID_E = ?
+        `, [id_e]);
 
-        if (result.rows.length > 0) {
-            res.json(result.rows[0]);
+        if (rows.length > 0) {
+            res.json(rows[0]);
         } else {
             res.status(404).send('Empleado no encontrado');
         }
@@ -568,15 +568,15 @@ router.get('/empleado/:id/editData', async(req, res) => {
         connection = await getConnection();
         const id_e = req.params.id;
 
-        const result = await connection.execute(`
+        const [rows] = await connection.query(`
             SELECT EMPLEADO.ID_E, EMPLEADO.CONCESIONARIA_CLAVE, EMPLEADO.NOMBRE, EMPLEADO.APELLIDO_PAT, EMPLEADO.APELLIDO_MAT, EMPLEADO.RFC, EMPLEADO.FECHA_NACI,
             EMPLEADO.CARGO_EMPLEADO_ID, EMPLEADO.CONTACTO_EMPLEADO_ID, EMPLEADO.DIRECCION_ID
             FROM EMPLEADO
-            WHERE EMPLEADO.ID_E = :id_e
-        `, { id_e });
+            WHERE EMPLEADO.ID_E = ?
+        `, [id_e]);
 
-        if (result.rows.length > 0) {
-            res.json(result.rows[0]);
+        if (rows.length > 0) {
+            res.json(rows[0]);
         } else {
             res.status(404).send('Empleado no encontrado');
         }
@@ -595,14 +595,14 @@ router.get('/vehiculo/:id/editData', async(req, res) => {
         connection = await getConnection();
         const id_v = req.params.id;
 
-        const result = await connection.execute(`
+        const [rows] = await connection.query(`
             SELECT VEHICULO.ID_V, VEHICULO.VIN, VEHICULO.MARCA_ID, VEHICULO.MODELO_ID, VEHICULO.ANIO, VEHICULO.COLOR_ID, VEHICULO.TIPO_ID, VEHICULO.LINEA, VEHICULO.TRANSMISION_ID, VEHICULO.PRECIO, VEHICULO.ESTADO_V_ID, VEHICULO.FECHA_INGRESO, VEHICULO.NUM_MOTOR, VEHICULO.TIPO_MOTOR_ID, VEHICULO.CAPACIDAD, VEHICULO.NUM_CILINDROS, VEHICULO.NUM_PUERTAS, VEHICULO.PROVEEDOR_ID_FK
             FROM VEHICULO
-            WHERE VEHICULO.ID_V = :id_v
-        `, { id_v });
+            WHERE VEHICULO.ID_V = ?
+        `, [id_v]);
 
-        if (result.rows.length > 0) {
-            res.json(result.rows[0]);
+        if (rows.length > 0) {
+            res.json(rows[0]);
         } else {
             res.status(404).send('Vehículo no encontrado');
         }
@@ -619,8 +619,8 @@ router.get('/tofillemp/cargos', async(req, res) => {
     let connection;
     try {
         connection = await getConnection();
-        const result = await connection.execute(`SELECT ID, CARGO FROM CARGO_EMPLEADO ORDER BY ID ASC`);
-        res.json(result.rows);
+        const [rows] = await connection.query(`SELECT ID, CARGO FROM CARGO_EMPLEADO ORDER BY ID ASC`);
+        res.json(rows);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -634,8 +634,8 @@ router.get('/tofillemp/contacto_empleado', async(req, res) => {
     let connection;
     try {
         connection = await getConnection();
-        const result = await connection.execute(`SELECT ID, CORREO FROM CONTACTO_EMPLEADO ORDER BY ID ASC`);
-        res.json(result.rows);
+        const [rows] = await connection.query(`SELECT ID, CORREO FROM CONTACTO_EMPLEADO ORDER BY ID ASC`);
+        res.json(rows);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -649,8 +649,8 @@ router.get('/tofillemp/direccion', async(req, res) => {
     let connection;
     try {
         connection = await getConnection();
-        const result = await connection.execute(`SELECT ID, CALLE FROM DIRECCION ORDER BY ID ASC`);
-        res.json(result.rows);
+        const [rows] = await connection.query(`SELECT ID, CALLE FROM DIRECCION ORDER BY ID ASC`);
+        res.json(rows);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');
@@ -664,8 +664,8 @@ router.get('/tofillemp/concesionarias', async(req, res) => {
     let connection;
     try {
         connection = await getConnection();
-        const result = await connection.execute(`SELECT CLAVE, NOMBRE FROM CONCESIONARIA ORDER BY CLAVE ASC`);
-        res.json(result.rows);
+        const [rows] = await connection.query(`SELECT CLAVE, NOMBRE FROM CONCESIONARIA ORDER BY CLAVE ASC`);
+        res.json(rows);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener los datos');

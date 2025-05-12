@@ -1,23 +1,16 @@
-const oracledb = require('oracledb');
-
-oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
+const mysql = require('mysql2/promise');
 
 async function getConnection() {
     const connectionConfigs = [{
-            user: 'autosadmin',
-            password: 'Pix3lif',
-            connectString: '127.0.0.1:1521/XEPDB1'
-        },
-        {
-            user: 'USR_ACDD',
-            password: 'PassACDD',
-            connectString: '127.0.0.1:1521/XEPDB1'
-        }
-    ];
+        host: '127.0.0.1',
+        user: 'root',
+        password: 'Pix3lif',
+        database: 'CONCESIONARIA'
+    }];
 
     for (const config of connectionConfigs) {
         try {
-            const connection = await oracledb.getConnection(config);
+            const connection = await mysql.createConnection(config);
             return connection;
         } catch (err) {
             console.error(`Error al obtener la conexión con el usuario ${config.user}:`, err);
@@ -30,7 +23,7 @@ async function getConnection() {
 async function closeConnection(connection) {
     if (connection) {
         try {
-            await connection.close();
+            await connection.end();
         } catch (err) {
             console.error('Error al cerrar la conexión a la base de datos:', err);
         }
